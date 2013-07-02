@@ -4,6 +4,7 @@ import org.specs2.mutable.Specification
 import scala.slick.session.Database
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
+import finloader.domain.Expenses
 
 /**
  * @author Paul Lysak
@@ -18,6 +19,8 @@ class Spec extends Specification {
 
     Database.forURL("jdbc:postgresql://localhost/finloader?user=dbadmin&password=dbadmin", driver = "org.postgresql.Driver") withSession {
       println("hello session")
+
+      Expenses.ddl.create
 
       Query(Suppliers) foreach {
         case (key, value) =>

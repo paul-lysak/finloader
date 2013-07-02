@@ -10,5 +10,5 @@ libraryDependencies ++= List(
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "com.h2database" % "h2" % "1.3.166",
   "postgresql" % "postgresql" % "9.1-901.jdbc4",
-  "org.specs2" %% "specs2" % "1.14" % "test"
+  "org.specs2" %% "specs2" % "1.14" % "test,it"
 )
