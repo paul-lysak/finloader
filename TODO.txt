@@ -1,5 +1,7 @@
-- Integration test DB setup/teardown
-- DB credentials configuration for production and test DB
+- Logging framework instead of println
+- Domain objects
+- DB credentials configuration for production DB
 - Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
+- Get rid of JDBC URL in configs

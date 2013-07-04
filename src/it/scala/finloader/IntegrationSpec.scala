@@ -1,6 +1,7 @@
 package finloader
 
 import org.specs2.mutable.Specification
+import ITUtils.db
 
 /**
  * @author Paul Lysak
@@ -10,6 +11,6 @@ import org.specs2.mutable.Specification
 class IntegrationSpec extends Specification {
 
   "it" should {
-    println("hello world")
+    println("hello, db: "+db)
   }
 }

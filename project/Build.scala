@@ -8,7 +8,7 @@ object HelloBuild extends Build {
     base = file(".")).
     configs(IntegrationTest).
     settings(Defaults.itSettings : _*).
-    settings(testOptions in IntegrationTest += Tests.Setup(DB.create _)).
-    settings(testOptions in IntegrationTest += Tests.Cleanup(DB.drop _))
+    settings(testOptions in IntegrationTest += Tests.Setup(DbSetupUtils.create _)).
+    settings(testOptions in IntegrationTest += Tests.Cleanup(DbSetupUtils.drop _))
 }
 
