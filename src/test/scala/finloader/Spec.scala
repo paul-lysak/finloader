@@ -26,7 +26,7 @@ class Spec extends Specification {
 //        case (key, value) =>
 //          println("kv = "+key+", "+value)
 //      }
-    }
+//    }
   }
 }
 
