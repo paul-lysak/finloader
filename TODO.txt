@@ -1,6 +1,7 @@
 - Data for integration test
 - Find CSV parsing library
 - Implement exxpenses loading
+- Date creation via non-deprecated API
 - Logging framework instead of println
 - Remaining domain objects
 - DB credentials configuration for production DB

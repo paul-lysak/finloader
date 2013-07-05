@@ -33,7 +33,10 @@ class ExpensesItSpec extends Specification {
 
   private val sampleExpenses = Set(
   //TODO actual data from exp*.csv
-    Expense(id = "1", date = new Date(2013, 06, 01), amount = 1234, category = "cat1", comment = "com")
+    Expense(id = "201306_1", date = new Date(2013, 06, 10), amount = 100, category = "food", comment = "supermarket"),
+    Expense(id = "201306_2", date = new Date(2013, 06, 11), amount = 350, category = "household"),
+    Expense(id = "201306_3", date = new Date(2013, 06, 12), amount = 320, category = "car_fuel", comment = "30L")
+
   )
 
   private lazy val loader = new ExpensesLoader(db)

@@ -10,7 +10,7 @@ import scala.slick.driver.PostgresDriver.simple._
  *         Date: 02.07.13
  *         Time: 23:05
  */
-case class Expense(id: String, date: Date, amount: Long, category: String, comment: String)
+case class Expense(id: String, date: Date, amount: Long, category: String, comment: String = "")
 
 object Expenses extends Table[Expense]("expense") {
   def id = column[String]("id", O.PrimaryKey)
