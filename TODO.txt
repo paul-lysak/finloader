@@ -1,7 +1,5 @@
-- Data for integration test
-- Find CSV parsing library
-- Implement exxpenses loading
-- Date creation via non-deprecated API
+- Merge data from different versions of .csv file
+- Multiple files processing. ID prefix handling.
 - Logging framework instead of println
 - Remaining domain objects
 - DB credentials configuration for production DB

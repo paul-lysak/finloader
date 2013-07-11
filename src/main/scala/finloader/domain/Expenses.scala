@@ -1,6 +1,9 @@
 package finloader.domain
 
 import java.sql.Date
+import com.github.tototoshi.slick.JodaSupport._
+import org.joda.time.LocalDate
+
 //import scala.slick.session.Database
 import scala.slick.driver.PostgresDriver.simple._
 //import Database.threadLocalSession
@@ -10,12 +13,12 @@ import scala.slick.driver.PostgresDriver.simple._
  *         Date: 02.07.13
  *         Time: 23:05
  */
-case class Expense(id: String, date: Date, amount: Long, category: String, comment: String = "")
+case class Expense(id: String, date: LocalDate, amount: Long, category: String, comment: String = "")
 
 object Expenses extends Table[Expense]("expense") {
   def id = column[String]("id", O.PrimaryKey)
 
-  def date = column[Date]("date")
+  def date = column[LocalDate]("date")
 
   def amount = column[Long]("amount")
 

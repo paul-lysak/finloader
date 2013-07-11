@@ -8,6 +8,8 @@ import finloader.domain.{Expenses, Expense}
 import java.sql.Date
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
+import org.joda.time.LocalDate
+import org.joda.time.format.ISODateTimeFormat
 
 
 /**
@@ -16,9 +18,8 @@ import Database.threadLocalSession
  *         Time: 21:55
  */
 class ExpensesLoader(db: Database) {
-  def load(source: URL) {
+  def load(source: URL, idPrefix: String = "") {
     println(s"TODO load from $source")
-    val idPrefix = "0_"
     val reader = CSVReader.open(new File(source.toURI))
     reader.toStream() match {
       case firstRow #:: body =>
@@ -26,7 +27,7 @@ class ExpensesLoader(db: Database) {
         for(row <- body) {
           val r = row.toIndexedSeq
           val expense = Expense(id = idPrefix+r(p("id")),
-            date = new Date(2013, 06, 10), //TODO parse date
+            date = ISODateTimeFormat.date().parseLocalDate(r(p("date"))),
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
@@ -45,5 +46,4 @@ class ExpensesLoader(db: Database) {
       Expenses.insert(expense)
     }
   }
-
 }
