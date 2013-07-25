@@ -18,26 +18,36 @@ import Database.threadLocalSession
  */
 class ExpensesItSpec extends Specification {
 
-  "ExpensesLoader" should {
+  "ExpensesLoader" >> {
     "load expenses" in {
-      val url = getClass.getResource("/exp_201306.csv")
-      loader.load(url, "pref_")
+      val url1 = getClass.getResource("/exp_201306.csv")
+      loader.load(url1, "pref_")
       db.withSession {
-//        Expenses.insert(Expense(id = "1", date = new Date(2013, 06, 01), amount = 1234, category = "cat1", comment = "com"))
         val actualExpenses = Query(Expenses).list().toSet
-//        println("Actual expenses: "+actualExpenses)
         actualExpenses must be equalTo(sampleExpenses)
+      }
+
+      val url2 = getClass.getResource("/exp_201306_.csv")
+      loader.load(url2, "pref_")
+      db.withSession {
+        val actualExpenses = Query(Expenses).list().toSet
+        actualExpenses must be equalTo(mergedExpenses)
       }
     }
   }
 
 
   private val sampleExpenses = Set(
-  //TODO actual data from exp*.csv
     Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
     Expense(id = "pref_2", date = new LocalDate(2013, 06, 11), amount = 35050, category = "household"),
     Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L")
+  )
 
+  private val mergedExpenses = Set(
+    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 15), amount = 55050, category = "household", comment = "repair something"),
+    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L"),
+    Expense(id = "pref_4", date = new LocalDate(2013, 06, 13), amount = 22000, category = "food", comment = "fruits")
   )
 
   private lazy val loader = new ExpensesLoader(db)

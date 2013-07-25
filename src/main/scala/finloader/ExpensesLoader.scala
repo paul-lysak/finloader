@@ -19,7 +19,6 @@ import org.joda.time.format.ISODateTimeFormat
  */
 class ExpensesLoader(db: Database) {
   def load(source: URL, idPrefix: String = "") {
-    println(s"TODO load from $source")
     val reader = CSVReader.open(new File(source.toURI))
     reader.toStream() match {
       case firstRow #:: body =>
@@ -31,19 +30,23 @@ class ExpensesLoader(db: Database) {
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
-          println("row: "+expense)
-          save(expense)
+//          println("row: "+expense)
+          upsert(expense)
         }
       case _ =>
         println("can't find first line")
     }
-//    println("content = "+reader.all())
-    //TODO
   }
 
-  private def save(expense: Expense) {
+  private def upsert(expense: Expense) {
     db.withSession {
-      Expenses.insert(expense)
+      Query(Expenses).map(_.id).filter(_ === expense.id).firstOption() match {
+        case Some(existingId) =>
+          Expenses.where(_.id === existingId).update(expense)
+        case None => {
+          Expenses.insert(expense)
+        }
+      }
     }
   }
 }

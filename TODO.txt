@@ -1,9 +1,10 @@
-- Merge data from different versions of .csv file
-- Multiple files processing. ID prefix handling.
+- Directories structure handling
+- Think of production packaging
+- DB credentials configuration for production DB
 - Logging framework instead of println
 - Remaining domain objects
-- DB credentials configuration for production DB
 - Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
+- Find out how to run spec2 tests sequentially
 - Get rid of JDBC URL in configs
