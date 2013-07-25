@@ -18,7 +18,7 @@ import Database.threadLocalSession
  */
 class ExpensesItSpec extends Specification {
 
-  "ExpensesLoader" >> {
+  "ExpensesLoader" should {
     "load expenses" in {
       val url1 = getClass.getResource("/exp_201306.csv")
       loader.load(url1, "pref_")

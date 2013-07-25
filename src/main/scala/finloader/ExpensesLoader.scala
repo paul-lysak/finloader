@@ -48,5 +48,5 @@ class ExpensesLoader(db: Database) {
         }
       }
     }
-  }
+  }//end upsert
 }

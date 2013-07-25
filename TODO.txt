@@ -1,4 +1,3 @@
-- Directories structure handling
 - Think of production packaging
 - DB credentials configuration for production DB
 - Logging framework instead of println
