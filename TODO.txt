@@ -1,5 +1,4 @@
-- Think of production packaging
-- DB credentials configuration for production DB
+- Use CLI arguments to load data folder and config
 - Logging framework instead of println
 - Remaining domain objects
 - Get rid of PostgreSQL driver dependency in code

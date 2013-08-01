@@ -15,3 +15,6 @@ project/plugins/project/
 .idea
 .idea_modules
 *.iml
+
+it.conf
+sample_data/fintracker.conf
