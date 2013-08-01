@@ -1,4 +1,5 @@
-- Use CLI arguments to load data folder and config
+- Save expenses to production DB
+- Sample scripts
 - Logging framework instead of println
 - Remaining domain objects
 - Get rid of PostgreSQL driver dependency in code
