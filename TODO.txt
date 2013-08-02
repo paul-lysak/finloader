@@ -1,6 +1,6 @@
-- Sample scripts
 - Logging framework instead of println
 - Log loading process
+- Allow skipping date - use previous then
 - Remaining domain objects
 - Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
