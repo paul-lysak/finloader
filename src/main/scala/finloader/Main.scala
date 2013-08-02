@@ -11,10 +11,9 @@ import java.io.File
 object Main {
   def main(args: Array[String]) {
     val conf = new CliConf(args)
-    val ctx = new FinloaderContext
+    val ctx = new FinloaderContext(new File(conf.config()))
     val dataFolder = new File(conf.data()).toURI.toURL
     ctx.finloaderService.loadData(dataFolder)
-    println("hi all")
   }
 }
 

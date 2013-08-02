@@ -1,6 +1,7 @@
 package finloader
 
 import java.net.URL
+import java.io.File
 
 /**
  * @author Paul Lysak
@@ -8,9 +9,18 @@ import java.net.URL
  *         Time: 23:20
  */
 class FinloaderService(locator: SourceLocator, expensesLoader: ExpensesLoader) {
+  expensesLoader.ensureTablesCreated()
 
   def loadData(folderUrl: URL) {
-    println(s"TODO: load from $folderUrl")
-    locator.locateExpenses(folderUrl).foreach(println)
+    locator.locateExpenses(folderUrl).foreach(
+      fileUrl => {
+        expensesLoader.load(fileUrl, idPrefix(fileUrl))
+      }
+    )
+  }
+
+  private def idPrefix(url: URL) = {
+      val file = new File(url.toURI)
+      file.getName.toLowerCase.stripSuffix(".csv") + "_"
   }
 }

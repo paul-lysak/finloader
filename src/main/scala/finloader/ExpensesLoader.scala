@@ -10,6 +10,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
+import scala.slick.jdbc.meta.MTable
 
 
 /**
@@ -30,11 +31,17 @@ class ExpensesLoader(db: Database) {
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
-//          println("row: "+expense)
           upsert(expense)
         }
       case _ =>
         println("can't find first line")
+    }
+  }
+
+  def ensureTablesCreated() {
+    db.withSession {
+      if(MTable.getTables(Expenses.tableName).elements().isEmpty)
+        Expenses.ddl.create
     }
   }
 
