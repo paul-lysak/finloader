@@ -11,6 +11,7 @@ import Database.threadLocalSession
 import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
 import scala.slick.jdbc.meta.MTable
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -20,7 +21,9 @@ import scala.slick.jdbc.meta.MTable
  */
 class ExpensesLoader(db: Database) {
   def load(source: URL, idPrefix: String = "") {
+    log.info(s"Loading expenses from $source")
     val reader = CSVReader.open(new File(source.toURI))
+    var count = 0
     reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
@@ -32,10 +35,12 @@ class ExpensesLoader(db: Database) {
             category = r(p("category")),
             comment = r(p("comment")))
           upsert(expense)
+          count += 1
         }
       case _ =>
         println("can't find first line")
     }
+    log.info(s"Loaded $count expenses from $source")
   }
 
   def ensureTablesCreated() {
@@ -48,12 +53,16 @@ class ExpensesLoader(db: Database) {
   private def upsert(expense: Expense) {
     db.withSession {
       Query(Expenses).map(_.id).filter(_ === expense.id).firstOption() match {
-        case Some(existingId) =>
+        case Some(existingId) => {
+          log.debug(s"Update $existingId")
           Expenses.where(_.id === existingId).update(expense)
+        }
         case None => {
           Expenses.insert(expense)
         }
       }
     }
   }//end upsert
+
+  val log = LoggerFactory.getLogger(classOf[ExpensesLoader])
 }

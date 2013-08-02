@@ -1,5 +1,3 @@
-- Logging framework instead of println
-- Log loading process
 - Allow skipping date - use previous then
 - Remaining domain objects
 - Get rid of PostgreSQL driver dependency in code
