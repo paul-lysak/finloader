@@ -3,6 +3,9 @@ package finloader
 import scala.slick.session.Database
 import com.typesafe.config.ConfigFactory
 import java.io.File
+import scala.collection.JavaConversions._
+import com.github.tototoshi.csv.DefaultCSVFormat
+import org.slf4j.LoggerFactory
 
 /**
  * @author Paul Lysak
@@ -10,10 +13,17 @@ import java.io.File
  *         Time: 23:24
  */
 class FinloaderContext(configFile: File) {
-  val config = ConfigFactory.parseFile(configFile)
+  private val fallbackConfig = ConfigFactory.parseMap(Map("csv.separator" -> ","))
+  val config = ConfigFactory.parseFile(configFile).withFallback(fallbackConfig)
   val db = Database.forURL(config.getString("database.url"), driver = config.getString("database.driver"))
 
+  implicit private val csvFormat = new DefaultCSVFormat {
+    override val separator = config.getString("csv.separator").head
+  }
   val locator = new SourceLocator
   val expensesLoader = new ExpensesLoader(db)
+
   val finloaderService = new FinloaderService(locator, expensesLoader)
+
+  private val log = LoggerFactory.getLogger(classOf[FinloaderContext])
 }

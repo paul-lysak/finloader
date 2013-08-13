@@ -3,7 +3,7 @@ package finloader
 import scala.slick.session.Database
 import java.io.{File, InputStream, Reader}
 import java.net.URL
-import com.github.tototoshi.csv.CSVReader
+import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Expenses, Expense}
 import java.sql.Date
 import scala.slick.driver.PostgresDriver.simple._
@@ -19,9 +19,10 @@ import org.slf4j.LoggerFactory
  *         Date: 05.07.13
  *         Time: 21:55
  */
-class ExpensesLoader(db: Database) {
+class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) {
   def load(source: URL, idPrefix: String = "") {
     log.info(s"Loading expenses from $source")
+    log.debug(s"Using CSV separator ${csvFormat.separator}")
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
     reader.toStream() match {

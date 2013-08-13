@@ -5,6 +5,7 @@ import ITUtils.db
 import scala.slick.session.Database
 import java.sql.Date
 import org.joda.time.LocalDate
+import com.github.tototoshi.csv.DefaultCSVFormat
 
 //import scala.slick.lifted.Query
 import finloader.domain.{Expenses, Expense}
@@ -21,14 +22,14 @@ class ExpensesItSpec extends Specification {
   "ExpensesLoader" should {
     "load expenses" in {
       val url1 = getClass.getResource("/exp_201306.csv")
-      loader.load(url1, "pref_")
+      loader(',').load(url1, "pref_")
       db.withSession {
         val actualExpenses = Query(Expenses).list().toSet
         actualExpenses must be equalTo(sampleExpenses)
       }
 
       val url2 = getClass.getResource("/exp_201306_.csv")
-      loader.load(url2, "pref_")
+      loader(';').load(url2, "pref_")
       db.withSession {
         val actualExpenses = Query(Expenses).list().toSet
         actualExpenses must be equalTo(mergedExpenses)
@@ -50,5 +51,5 @@ class ExpensesItSpec extends Specification {
     Expense(id = "pref_4", date = new LocalDate(2013, 06, 13), amount = 22000, category = "food", comment = "fruits")
   )
 
-  private lazy val loader = new ExpensesLoader(db)
+  private def loader(sep: Char) = new ExpensesLoader(db)(new DefaultCSVFormat {override val separator = sep})
 }

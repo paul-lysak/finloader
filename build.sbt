@@ -20,4 +20,4 @@ libraryDependencies ++= List(
   "org.specs2" %% "specs2" % "1.14" % "test,it"
 )
 
-exportJars := true
+//exportJars := true
