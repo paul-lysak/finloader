@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *         Date: 05.07.13
  *         Time: 21:55
  */
-class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) {
+class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
   def load(source: URL, idPrefix: String = "") {
     log.info(s"Loading expenses from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")

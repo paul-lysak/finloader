@@ -3,7 +3,7 @@ package finloader
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.session.Database
-import finloader.domain.Expenses
+import finloader.domain.{Balances, Expenses}
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 
@@ -25,6 +25,7 @@ object ITUtils {
     println("creating DB schema...")
     d withSession  {
       Expenses.ddl.create
+      Balances.ddl.create
     }
   }
 }

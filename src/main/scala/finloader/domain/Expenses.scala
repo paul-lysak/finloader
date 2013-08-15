@@ -1,6 +1,5 @@
 package finloader.domain
 
-import java.sql.Date
 import com.github.tototoshi.slick.JodaSupport._
 import org.joda.time.LocalDate
 
