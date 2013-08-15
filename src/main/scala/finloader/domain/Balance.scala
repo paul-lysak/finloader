@@ -10,10 +10,10 @@ import scala.slick.driver.PostgresDriver.simple._
  *         Time: 21:47
  */
 
-case class Balance(id: Long, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
+case class Balance(id: String, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
 
 object Balances extends Table[Balance]("balance") {
-  def id = column[Long]("id", O.PrimaryKey)
+  def id = column[String]("id", O.PrimaryKey)
 
   def snapshotId = column[String]("snapshotId")
 
