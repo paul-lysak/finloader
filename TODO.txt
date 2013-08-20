@@ -1,4 +1,3 @@
-- Income tracking
 - reuse Loader.ensureTablesCreated
 - reuse upserts
 - Allow skipping date - use previous then
