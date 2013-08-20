@@ -6,6 +6,7 @@ import scala.slick.session.Database
 import java.sql.Date
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
+import finloader.loader.ExpensesLoader
 
 //import scala.slick.lifted.Query
 import finloader.domain.{Expenses, Expense}

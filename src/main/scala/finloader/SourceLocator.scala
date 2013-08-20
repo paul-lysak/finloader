@@ -11,13 +11,20 @@ import scala.collection.JavaConversions._
  */
 class SourceLocator {
 
-  def locateExpenses(baseUrl: URL): Seq[URL]  = {
+  val locateExpenses = locate(ExpensesFilter) _
+  val locateBalances = locate(BalancesFilter) _
+  val locateIncomes = locate(IncomesFilter) _
+
+  def locate(filter: FilenameFilter)(baseUrl: URL): Seq[URL] =  {
     val file = new File(baseUrl.toURI)
-    val files = file.listFiles(ExpensesFilter)
+    val files = file.listFiles(filter)
     files.map(_.toURI.toURL)
   }
 
+
   private object ExpensesFilter extends Filter("exp_")
+  private object BalancesFilter extends Filter("chk_")
+  private object IncomesFilter extends Filter("inc_")
 
   private class Filter(prefix: String) extends FilenameFilter {
     private def sub(dir: File, name: String): File =

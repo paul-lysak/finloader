@@ -1,4 +1,4 @@
-package finloader
+package finloader.loader
 
 import com.github.tototoshi.csv.{CSVReader, CSVFormat}
 import scala.slick.session.Database
@@ -11,6 +11,7 @@ import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 import org.joda.time.format.ISODateTimeFormat
 import java.io.File
+import finloader.FinloaderUtils
 
 /**
  * @author Paul Lysak

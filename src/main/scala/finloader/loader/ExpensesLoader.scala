@@ -1,4 +1,4 @@
-package finloader
+package finloader.loader
 
 import scala.slick.session.Database
 import java.io.{File, InputStream, Reader}

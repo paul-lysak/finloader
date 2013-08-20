@@ -1,4 +1,4 @@
-package finloader
+package finloader.loader
 
 import java.net.URL
 

@@ -3,22 +3,21 @@ package finloader
 import java.net.URL
 import java.io.File
 import org.slf4j.LoggerFactory
+import finloader.loader.{BalancesLoader, ExpensesLoader}
 
 /**
  * @author Paul Lysak
  *         Date: 01.08.13
  *         Time: 23:20
  */
-class FinloaderService(locator: SourceLocator, expensesLoader: ExpensesLoader) {
+class FinloaderService(locator: SourceLocator, expensesLoader: ExpensesLoader, balancesLoader: BalancesLoader) {
   expensesLoader.ensureTablesCreated()
+  balancesLoader.ensureTablesCreated()
 
   def loadData(folderUrl: URL) {
     log.info(s"Loading data from $folderUrl...")
-    locator.locateExpenses(folderUrl).foreach(
-      fileUrl => {
-        expensesLoader.load(fileUrl, idPrefix(fileUrl))
-      }
-    )
+    locator.locateExpenses(folderUrl).foreach( fileUrl =>  expensesLoader.load(fileUrl, idPrefix(fileUrl)) )
+    locator.locateBalances(folderUrl).foreach( fileUrl =>  balancesLoader.load(fileUrl, idPrefix(fileUrl)) )
     log.info(s"Finished loading data from $folderUrl")
   }
 
