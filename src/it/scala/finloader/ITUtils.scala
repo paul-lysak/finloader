@@ -3,7 +3,7 @@ package finloader
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.session.Database
-import finloader.domain.{Balances, Expenses}
+import finloader.domain.{Incomes, Balances, Expenses}
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 
@@ -26,6 +26,7 @@ object ITUtils {
     d withSession  {
       Expenses.ddl.create
       Balances.ddl.create
+      Incomes.ddl.create
     }
   }
 }

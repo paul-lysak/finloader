@@ -42,7 +42,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           count += 1
         }
       case _ =>
-        println("can't find first line")
+        log.error("can't find first line")
     }
     upsertSnapshot(snapshot._1, snapshot._2)
     log.info(s"Loaded $count balances from $source")

@@ -39,7 +39,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           count += 1
         }
       case _ =>
-        println("can't find first line")
+        log.error("can't find first line")
     }
     log.info(s"Loaded $count expenses from $source")
   }
