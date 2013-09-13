@@ -10,7 +10,7 @@ import Database.threadLocalSession
 import org.joda.time.format.ISODateTimeFormat
 import scala.slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
-import finloader.FinloaderUtils
+import finloader.{DbUtils, FinloaderUtils}
 
 
 /**
@@ -18,7 +18,9 @@ import finloader.FinloaderUtils
   *         Date: 05.07.13
   *         Time: 21:55
   */
-class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
+class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+   private implicit val dbImpl = db
+
    def load(source: URL, idPrefix: String = "") {
      log.info(s"Loading incomes from $source")
      log.debug(s"Using CSV separator ${csvFormat.separator}")
@@ -45,12 +47,7 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
      log.info(s"Loaded $count incomes from $source")
    }
 
-   def ensureTablesCreated() {
-     db.withSession {
-       if(MTable.getTables(Incomes.tableName).elements().isEmpty)
-         Incomes.ddl.create
-     }
-   }
+   def ensureTablesCreated() = ensureTableCreated(Incomes)
 
    private def upsert(income: Income) {
      db.withSession {

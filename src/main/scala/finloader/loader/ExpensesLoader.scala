@@ -12,6 +12,7 @@ import org.joda.time.LocalDate
 import org.joda.time.format.ISODateTimeFormat
 import scala.slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
+import finloader.DbUtils
 
 
 /**
@@ -19,7 +20,9 @@ import org.slf4j.LoggerFactory
  *         Date: 05.07.13
  *         Time: 21:55
  */
-class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
+class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+  private implicit val dbImpl = db
+
   def load(source: URL, idPrefix: String = "") {
     log.info(s"Loading expenses from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
@@ -44,12 +47,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loaded $count expenses from $source")
   }
 
-  def ensureTablesCreated() {
-    db.withSession {
-      if(MTable.getTables(Expenses.tableName).elements().isEmpty)
-        Expenses.ddl.create
-    }
-  }
+  def ensureTablesCreated() = ensureTableCreated(Expenses)
 
   private def upsert(expense: Expense) {
     db.withSession {

@@ -1,6 +1,7 @@
 package finloader.loader
 
 import java.net.URL
+import ch.epfl.lamp.compiler.msil.util.Table
 
 /**
  * @author Paul Lysak
@@ -9,4 +10,6 @@ import java.net.URL
  */
 trait DataLoader {
   def load(source: URL, idPrefix: String = "")
+
+  def ensureTablesCreated()
 }

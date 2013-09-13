@@ -11,14 +11,16 @@ import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 import org.joda.time.format.ISODateTimeFormat
 import java.io.File
-import finloader.FinloaderUtils
+import finloader.{DbUtils, FinloaderUtils}
 
 /**
  * @author Paul Lysak
  *         Date: 15.08.13
  *         Time: 21:43
  */
-class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
+class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+  private implicit val dbImpl = db
+
   def load(source: URL, idPrefix: String) {
     log.info(s"Loading balances from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
@@ -58,12 +60,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     }
   }
 
-  def ensureTablesCreated() {
-    db.withSession {
-      if(MTable.getTables(Balances.tableName).elements().isEmpty)
-        Balances.ddl.create
-    }
-  }
+  def ensureTablesCreated() = ensureTableCreated(Balances)
 
   def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
     db.withSession {
