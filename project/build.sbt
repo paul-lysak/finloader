@@ -12,3 +12,4 @@ libraryDependencies ++= List(
   "com.h2database" % "h2" % "1.3.166",
   "postgresql" % "postgresql" % "9.1-901.jdbc4"
 )
+

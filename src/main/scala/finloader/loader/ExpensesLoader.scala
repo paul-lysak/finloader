@@ -28,26 +28,42 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.debug(s"Using CSV separator ${csvFormat.separator}")
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
-    reader.toStream() match {
+    val expensesStream: Stream[Expense] = Expense(null, null, 0, null) #:: (reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
-        for(row <- body) {
+        for(row <- body) yield {
           val r = row.toIndexedSeq
           val expense = Expense(id = idPrefix+r(p("id")),
-            date = ISODateTimeFormat.date().parseLocalDate(r(p("date"))),
+            date = parseDate(r(p("date"))),
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
-          upsert(expense)
+//          upsert(expense)
           count += 1
+          expense
         }
       case _ =>
         log.error("can't find first line")
-    }
+        Stream()
+    })
+
+    val expStrWithDefaults: Stream[Expense] = expensesStream.tail.zip(expensesStream).
+      map({case (thisExp, prevExp) =>
+        val date = if(thisExp.date == null) prevExp.date else thisExp.date
+        thisExp.copy(date = date)})
+
+    expStrWithDefaults.foreach(upsert)
+
     log.info(s"Loaded $count expenses from $source")
   }
 
   def ensureTablesCreated() = ensureTableCreated(Expenses)
+
+  private def parseDate(dateStr: String) =
+    if(dateStr.isEmpty)
+      null
+    else
+      ISODateTimeFormat.date().parseLocalDate(dateStr)
 
   private def upsert(expense: Expense) {
     db.withSession {

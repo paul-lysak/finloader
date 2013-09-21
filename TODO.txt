@@ -1,7 +1,6 @@
-- Allow skipping date - use previous then
+- Allow skipping date in income and status
 - Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
-- Find out how to run spec2 tests sequentially
 - Get rid of JDBC URL in configs
 - reuse upserts
