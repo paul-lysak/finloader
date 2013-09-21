@@ -71,6 +71,7 @@ class ExpensesItSpec extends Specification {
   private val skippedDateExpenses = Set(
     Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
     Expense(id = "pref_2", date = new LocalDate(2013, 06, 10), amount = 35050, category = "household"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 10), amount = 7000, category = "transport", comment = "taxi"),
     Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L")
   )
 

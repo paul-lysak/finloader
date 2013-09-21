@@ -1,4 +1,7 @@
-- Allow skipping date in income and status
+- Allow skipping date
+    - expenses
+    - balance
+    - income
 - Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
