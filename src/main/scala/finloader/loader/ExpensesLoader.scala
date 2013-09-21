@@ -28,7 +28,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.debug(s"Using CSV separator ${csvFormat.separator}")
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
-    val expensesStream: Stream[Expense] = Expense(null, null, 0, null) #:: (reader.toStream() match {
+    val expensesStream: Stream[Expense] =  (reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
         for(row <- body) yield {
@@ -47,12 +47,12 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     })
 
-    val expStrWithDefaults: Stream[Expense] = expensesStream.tail.zip(expensesStream).
-      map({case (thisExp, prevExp) =>
+    lazy val expStrWithDefaults: Stream[Expense] = (Expense(null, null, 0, null) #:: expStrWithDefaults).zip(expensesStream).
+          map({case (prevExp, thisExp) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date
         thisExp.copy(date = date)})
 
-    expStrWithDefaults.foreach(upsert)
+   expStrWithDefaults.foreach(upsert)
 
     log.info(s"Loaded $count expenses from $source")
   }

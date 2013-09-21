@@ -1,5 +1,4 @@
 - Allow skipping date
-    - expenses
     - balance
     - income
 - Get rid of PostgreSQL driver dependency in code

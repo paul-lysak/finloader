@@ -1,5 +1,5 @@
 id,date,amount,category,comment,tags
 1,2013-06-10,100,food,supermarket,
 2,,350.50,household,,
-2,,70,transport,taxi,
-3,2013-06-12,320,car_fuel,30L,
+3,,70,transport,taxi,
+4,2013-06-12,320,car_fuel,30L,
