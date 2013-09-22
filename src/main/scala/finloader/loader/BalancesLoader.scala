@@ -1,17 +1,15 @@
 package finloader.loader
 
 import com.github.tototoshi.csv.{CSVReader, CSVFormat}
-import scala.slick.session.Database
 import java.net.URL
 import org.slf4j.LoggerFactory
-import scala.slick.jdbc.meta.MTable
 import finloader.domain.{Balance, Expense, Balances}
 import scala.slick.session.Database
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
-import org.joda.time.format.ISODateTimeFormat
 import java.io.File
 import finloader.{DbUtils, FinloaderUtils}
+import finloader.FinloaderUtils._
 
 /**
  * @author Paul Lysak
@@ -25,28 +23,40 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loading balances from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
     val reader = CSVReader.open(new File(source.toURI))
-    var snapshot = ("", Seq[Balance]())
     var count = 0
-    reader.toStream() match {
+    val balances = reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
-        for(row <- body) {
+        for(row <- body) yield {
           val r = row.toIndexedSeq
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           val balance = Balance(id = idPrefix+(count + 1),
             snapshotId = idPrefix+r(p("snapshotId")),
-            date = ISODateTimeFormat.date().parseLocalDate(r(p("date"))),
+            date = parseDate(r(p("date"))),
             place = r(p("place")),
             amount = amt,
             currency = curr,
             comment = r(p("comment")))
-          snapshot = addItem(balance, snapshot._1, snapshot._2)
           count += 1
+          balance
         }
       case _ =>
         log.error("can't find first line")
+        Stream()
     }
-    upsertSnapshot(snapshot._1, snapshot._2)
+
+    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+          map({case (prev, current) =>
+        val snapshotId = if(current.snapshotId == idPrefix) prev.snapshotId else current.snapshotId
+        val date = if(current.date == null) prev.date else current.date
+        current.copy(snapshotId = snapshotId, date = date)})
+
+    defaultedBalances.foreach(println)
+
+    val groupedBalances = groupBalances(defaultedBalances)
+
+    groupedBalances.foreach((upsertSnapshot _).tupled)
+
     log.info(s"Loaded $count balances from $source")
   }
 
@@ -70,6 +80,16 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     }
   }
 
+
+  private def groupBalances(balances: Stream[Balance]): Stream[(String, Seq[Balance])] = {
+    if(balances.isEmpty)
+      Stream()
+    else {
+      val snapshotId = balances.head.snapshotId
+      val (thisSnapshot, remainder) = balances.span(_.snapshotId == snapshotId)
+      (snapshotId, thisSnapshot.toSeq) #:: groupBalances(remainder)
+    }
+  }
 
   val log = LoggerFactory.getLogger(classOf[BalancesLoader])
 }

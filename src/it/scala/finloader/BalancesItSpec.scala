@@ -35,8 +35,8 @@ class BalancesItSpec extends Specification {
     Balance(id = "pref_1", snapshotId = "pref_1", date = new LocalDate(2013, 05, 10), place = "cash", amount = 20000, currency = "USD", comment = "com1"),
     Balance(id = "pref_2", snapshotId = "pref_1", date = new LocalDate(2013, 05, 10), place = "cash", amount = 50000, currency = "UAH", comment = ""),
     Balance(id = "pref_3", snapshotId = "pref_2", date = new LocalDate(2013, 06, 10), place = "cash", amount = 15000, currency = "USD", comment = ""),
-    Balance(id = "pref_4", snapshotId = "pref_2", date = new LocalDate(2013, 05, 10), place = "cash", amount = 70000, currency = "UAH", comment = "com2"),
-    Balance(id = "pref_5", snapshotId = "pref_2", date = new LocalDate(2013, 05, 10), place = "card", amount = 150000, currency = "UAH", comment = "")
+    Balance(id = "pref_4", snapshotId = "pref_2", date = new LocalDate(2013, 06, 10), place = "cash", amount = 70000, currency = "UAH", comment = "com2"),
+    Balance(id = "pref_5", snapshotId = "pref_2", date = new LocalDate(2013, 06, 10), place = "card", amount = 150000, currency = "UAH", comment = "")
   )
 
   private def loader(sep: Char) = new BalancesLoader(db)(new DefaultCSVFormat {override val separator = sep})

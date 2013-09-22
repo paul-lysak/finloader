@@ -1,5 +1,7 @@
 package finloader
 
+import org.joda.time.format.ISODateTimeFormat
+
 /**
  * @author Paul Lysak
  *         Date: 15.08.13
@@ -12,5 +14,11 @@ object FinloaderUtils {
     val currency = parts.tail.headOption.getOrElse("UAH")
     (amount, currency)
   }
+
+  def parseDate(dateStr: String) =
+    if(dateStr.isEmpty)
+      null
+    else
+      ISODateTimeFormat.date().parseLocalDate(dateStr)
 
 }

@@ -1,18 +1,15 @@
 package finloader.loader
 
 import scala.slick.session.Database
-import java.io.{File, InputStream, Reader}
+import java.io.{File}
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Expenses, Expense}
-import java.sql.Date
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
-import org.joda.time.LocalDate
-import org.joda.time.format.ISODateTimeFormat
-import scala.slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
 import finloader.DbUtils
+import finloader.FinloaderUtils._
 
 
 /**
@@ -59,11 +56,6 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
   def ensureTablesCreated() = ensureTableCreated(Expenses)
 
-  private def parseDate(dateStr: String) =
-    if(dateStr.isEmpty)
-      null
-    else
-      ISODateTimeFormat.date().parseLocalDate(dateStr)
 
   private def upsert(expense: Expense) {
     db.withSession {
