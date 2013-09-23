@@ -4,13 +4,12 @@ import scala.slick.session.Database
 import java.io.File
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
-import finloader.domain.{Income, Incomes, Expenses, Expense}
+import finloader.domain.{Income, Incomes}
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
-import org.joda.time.format.ISODateTimeFormat
-import scala.slick.jdbc.meta.MTable
 import org.slf4j.LoggerFactory
 import finloader.{DbUtils, FinloaderUtils}
+import FinloaderUtils._
 
 
 /**
@@ -26,24 +25,32 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
      log.debug(s"Using CSV separator ${csvFormat.separator}")
      val reader = CSVReader.open(new File(source.toURI))
      var count = 0
-     reader.toStream() match {
+     val incomes = reader.toStream() match {
        case firstRow #:: body =>
          val p = firstRow.zipWithIndex.toMap
-         for(row <- body) {
+         for(row <- body) yield {
            val r = row.toIndexedSeq
-           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
-           val income = Income(id = idPrefix+r(p("id")),
-             date = ISODateTimeFormat.date().parseLocalDate(r(p("date"))),
+           val (amt, curr) = parseAmount(r(p("amount")))
+           count += 1
+           Income(id = idPrefix+r(p("id")),
+             date = parseDate(r(p("date"))),
              amount = amt,
              currency = curr,
              source = r(p("source")),
              comment = r(p("comment")))
-           upsert(income)
-           count += 1
          }
        case _ =>
          log.error("can't find first line")
+         Stream()
      }
+
+    lazy val defaultedIncomes: Stream[Income] = (Income(null, null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
+          map({case (prev, curr) =>
+        val date = if(curr.date == null) prev.date else curr.date
+        curr.copy(date = date)})
+
+     defaultedIncomes.foreach(upsert)
+
      log.info(s"Loaded $count incomes from $source")
    }
 

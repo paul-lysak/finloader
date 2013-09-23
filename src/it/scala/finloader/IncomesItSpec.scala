@@ -33,7 +33,8 @@ class IncomesItSpec extends Specification {
 
   private val sampleIncomes = Set(
     Income(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 1000000, currency = "UAH", source = "job", comment = "for may 2013"),
-    Income(id = "pref_2", date = new LocalDate(2013, 06, 12), amount = 20000, currency = "UAH", source = "sell", comment = "old furniture")
+    Income(id = "pref_2", date = new LocalDate(2013, 06, 12), amount = 20000, currency = "UAH", source = "sell", comment = "old furniture"),
+    Income(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 50000, currency = "UAH", source = "sell", comment = "old computer")
   )
 
   private def loader(sep: Char) = new IncomesLoader(db)(new DefaultCSVFormat {override val separator = sep})

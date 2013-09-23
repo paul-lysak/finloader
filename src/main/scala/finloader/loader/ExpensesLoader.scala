@@ -30,26 +30,24 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         val p = firstRow.zipWithIndex.toMap
         for(row <- body) yield {
           val r = row.toIndexedSeq
-          val expense = Expense(id = idPrefix+r(p("id")),
+          count += 1
+          Expense(id = idPrefix+r(p("id")),
             date = parseDate(r(p("date"))),
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
-//          upsert(expense)
-          count += 1
-          expense
         }
       case _ =>
         log.error("can't find first line")
         Stream()
     })
 
-    lazy val expStrWithDefaults: Stream[Expense] = (Expense(null, null, 0, null) #:: expStrWithDefaults).zip(expensesStream).
+    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
           map({case (prevExp, thisExp) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date
         thisExp.copy(date = date)})
 
-   expStrWithDefaults.foreach(upsert)
+   defaultedExpenses.foreach(upsert)
 
     log.info(s"Loaded $count expenses from $source")
   }

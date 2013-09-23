@@ -3,7 +3,7 @@ package finloader.loader
 import com.github.tototoshi.csv.{CSVReader, CSVFormat}
 import java.net.URL
 import org.slf4j.LoggerFactory
-import finloader.domain.{Balance, Expense, Balances}
+import finloader.domain.{Balance, Balances}
 import scala.slick.session.Database
 import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
@@ -30,15 +30,14 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         for(row <- body) yield {
           val r = row.toIndexedSeq
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
-          val balance = Balance(id = idPrefix+(count + 1),
+          count += 1
+          Balance(id = idPrefix+count,
             snapshotId = idPrefix+r(p("snapshotId")),
             date = parseDate(r(p("date"))),
             place = r(p("place")),
             amount = amt,
             currency = curr,
             comment = r(p("comment")))
-          count += 1
-          balance
         }
       case _ =>
         log.error("can't find first line")
@@ -60,16 +59,6 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loaded $count balances from $source")
   }
 
-  private def addItem(item: Balance, snapshotId: String, snapshotItems: Seq[Balance]): (String, Seq[Balance]) = {
-    if(item.snapshotId == snapshotId || snapshotItems.isEmpty) {
-      (item.snapshotId, item +: snapshotItems)
-    }
-    else {
-      upsertSnapshot(snapshotId, snapshotItems)
-      (item.snapshotId, item +: Nil)
-    }
-  }
-
   def ensureTablesCreated() = ensureTableCreated(Balances)
 
   def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
@@ -79,7 +68,6 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
       Balances.insertAll(snapshotItems: _*)
     }
   }
-
 
   private def groupBalances(balances: Stream[Balance]): Stream[(String, Seq[Balance])] = {
     if(balances.isEmpty)
