@@ -4,9 +4,9 @@ import com.github.tototoshi.csv.{CSVReader, CSVFormat}
 import java.net.URL
 import org.slf4j.LoggerFactory
 import finloader.domain.{Balance, Balances}
-import scala.slick.session.Database
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database
+//import scala.slick.driver.PostgresDriver.simple._
+import Database.dynamicSession
 import java.io.File
 import finloader.{DbUtils, FinloaderUtils}
 import finloader.FinloaderUtils._
@@ -59,7 +59,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loaded $count balances from $source")
   }
 
-  def ensureTablesCreated() = ensureTableCreated(Balances)
+  def ensureTablesCreated() = ??? //ensureTableCreated(Balances)
 
   def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
     db.withSession {

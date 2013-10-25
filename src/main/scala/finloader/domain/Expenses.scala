@@ -1,11 +1,13 @@
 package finloader.domain
 
-import com.github.tototoshi.slick.JodaSupport._
+//import com.github.tototoshi.slick.JodaSupport._
 import org.joda.time.LocalDate
-
 //import scala.slick.session.Database
-import scala.slick.driver.PostgresDriver.simple._
+import scala.slick.driver.JdbcDriver._
+import scala.slick.lifted.Tag
 //import Database.threadLocalSession
+import scala.slick.util.TupleMethods
+import TupleMethods._
 
 /**
  * @author Paul Lysak
@@ -14,7 +16,7 @@ import scala.slick.driver.PostgresDriver.simple._
  */
 case class Expense(id: String, date: LocalDate, amount: Long, category: String, comment: String = "")
 
-object Expenses extends Table[Expense]("expense") {
+class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
   def id = column[String]("id", O.PrimaryKey)
 
   def date = column[LocalDate]("date")

@@ -1,6 +1,6 @@
 package finloader
 
-import scala.slick.session.Database
+import scala.slick.jdbc.JdbcBackend.Database
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.collection.JavaConversions._

@@ -1,12 +1,12 @@
 package finloader.loader
 
-import scala.slick.session.Database
+import scala.slick.jdbc.JdbcBackend.Database
 import java.io.File
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Income, Incomes}
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+//import scala.slick.driver.PostgresDriver.simple._
+import Database.dynamicSession
 import org.slf4j.LoggerFactory
 import finloader.{DbUtils, FinloaderUtils}
 import FinloaderUtils._
@@ -54,7 +54,7 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
      log.info(s"Loaded $count incomes from $source")
    }
 
-   def ensureTablesCreated() = ensureTableCreated(Incomes)
+   def ensureTablesCreated() = ??? //ensureTableCreated(Incomes)
 
    private def upsert(income: Income) {
      db.withSession {

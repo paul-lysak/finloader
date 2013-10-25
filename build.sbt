@@ -6,7 +6,8 @@ scalaVersion := "2.10.1"
 
 libraryDependencies ++= List(
   // use the right Slick version here:
-  "com.typesafe.slick" %% "slick" % "1.0.1",
+  // "com.typesafe.slick" %% "slick" % "1.0.1",
+  "com.typesafe.slick" % "slick_2.10" % "2.0.0-M2",
   "com.typesafe" % "config" % "1.0.2",
   "com.github.tototoshi" %% "scala-csv" % "0.8.0",
   "joda-time" % "joda-time" % "2.2",
