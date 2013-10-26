@@ -35,7 +35,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           val r = row.toIndexedSeq
           count += 1
           Expense(id = idPrefix+r(p("id")),
-//            date = parseDate(r(p("date"))),
+            date = parseDate(r(p("date"))),
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
@@ -45,12 +45,11 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     })
 
-//    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
-    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, 0, null) #:: defaultedExpenses).zip(expensesStream).
+    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
+//    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, 0, null) #:: defaultedExpenses).zip(expensesStream).
           map({case (prevExp, thisExp) =>
-//        val date = if(thisExp.date == null) prevExp.date else thisExp.date
-//        thisExp.copy(date = date)
-        thisExp
+        val date = if(thisExp.date == null) prevExp.date else thisExp.date
+        thisExp.copy(date = date)
     })
 
    defaultedExpenses.foreach(upsert)

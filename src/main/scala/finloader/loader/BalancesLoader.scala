@@ -36,7 +36,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           count += 1
           Balance(id = idPrefix+count,
             snapshotId = idPrefix+r(p("snapshotId")),
-//            date = parseDate(r(p("date"))),
+            date = parseDate(r(p("date"))),
             place = r(p("place")),
             amount = amt,
             currency = curr,
@@ -47,13 +47,12 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     }
 
-//    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
-    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+//    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, 0, null) #:: defaultedBalances).zip(balances).
           map({case (prev, current) =>
         val snapshotId = if(current.snapshotId == idPrefix) prev.snapshotId else current.snapshotId
-//        val date = if(current.date == null) prev.date else current.date
-//        current.copy(snapshotId = snapshotId, date = date)
-          current.copy(snapshotId = snapshotId)
+        val date = if(current.date == null) prev.date else current.date
+        current.copy(snapshotId = snapshotId, date = date)
     })
 
     defaultedBalances.foreach(println)

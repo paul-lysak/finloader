@@ -16,13 +16,13 @@ import scala.slick.util.TupleMethods._
  *         Date: 02.07.13
  *         Time: 23:05
  */
-//case class Income(id: String, date: LocalDate, amount: Long, currency: String, source: String, comment: String = "")
-case class Income(id: String, amount: Long, currency: String, source: String, comment: String = "")
+case class Income(id: String, date: LocalDate, amount: Long, currency: String, source: String, comment: String = "")
+//case class Income(id: String, amount: Long, currency: String, source: String, comment: String = "")
 
 class Incomes(tag: Tag) extends Table[Income](tag, "income") {
   def id = column[String]("id", O.PrimaryKey)
 
-//  def date = column[LocalDate]("date")
+  def date = column[LocalDate]("date")
 
   def amount = column[Long]("amount")
 
@@ -32,6 +32,6 @@ class Incomes(tag: Tag) extends Table[Income](tag, "income") {
 
   def comment = column[String]("comment")
 
-//  def * = id ~ date ~ amount ~ currency ~ source ~ comment <> (Income.tupled, Income.unapply _)
-  def * = id ~ amount ~ currency ~ source ~ comment <> (Income.tupled, Income.unapply _)
+  def * = id ~ date ~ amount ~ currency ~ source ~ comment <> (Income.tupled, Income.unapply _)
+//  def * = id ~ amount ~ currency ~ source ~ comment <> (Income.tupled, Income.unapply _)
 }

@@ -36,7 +36,7 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
            val (amt, curr) = parseAmount(r(p("amount")))
            count += 1
            Income(id = idPrefix+r(p("id")),
-//             date = parseDate(r(p("date"))),
+             date = parseDate(r(p("date"))),
              amount = amt,
              currency = curr,
              source = r(p("source")),
@@ -47,12 +47,11 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
          Stream()
      }
 
-//    lazy val defaultedIncomes: Stream[Income] = (Income(null, null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
-    lazy val defaultedIncomes: Stream[Income] = (Income(null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
+    lazy val defaultedIncomes: Stream[Income] = (Income(null, null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
+//    lazy val defaultedIncomes: Stream[Income] = (Income(null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
           map({case (prev, curr) =>
-//        val date = if(curr.date == null) prev.date else curr.date
-//        curr.copy(date = date)
-        curr
+        val date = if(curr.date == null) prev.date else curr.date
+        curr.copy(date = date)
     })
 
      defaultedIncomes.foreach(upsert)
