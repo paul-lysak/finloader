@@ -2,15 +2,14 @@ package finloader
 
 import org.specs2.mutable.Specification
 import ITUtils.db
-import scala.slick.session.Database
+import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.driver.JdbcDriver.simple._
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.{IncomesLoader, ExpensesLoader}
-
-//import scala.slick.lifted.Query
 import finloader.domain.{Income, Incomes, Expenses, Expense}
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+import Database.dynamicSession
+import scala.slick.lifted.TableQuery
 
 /**
  * @author Paul Lysak
@@ -23,8 +22,8 @@ class IncomesItSpec extends Specification {
     "load incomes" in {
       val url1 = getClass.getResource("/inc_2013.csv")
       loader(',').load(url1, "pref_")
-      db.withSession {
-        val actualIncomes = Query(Incomes).list().toSet
+      db.withDynSession {
+        val actualIncomes = TableQuery[Incomes].list().toSet
         actualIncomes must be equalTo(sampleIncomes)
       }
    }

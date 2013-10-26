@@ -2,15 +2,14 @@ package finloader
 
 import org.specs2.mutable.Specification
 import ITUtils.db
-import scala.slick.session.Database
+import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.driver.JdbcDriver.simple._
+import scala.slick.lifted.TableQuery
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.BalancesLoader
-
-//import scala.slick.lifted.Query
 import finloader.domain.{Balance, Balances, Expenses, Expense}
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+import Database.dynamicSession
 
 /**
  * @author Paul Lysak
@@ -23,8 +22,8 @@ class BalancesItSpec extends Specification {
     "load balances" in {
       val url1 = getClass.getResource("/chk_2013.csv")
       loader(',').load(url1, "pref_")
-      db.withSession {
-        val actualBalances = Query(Balances).list().toSet
+      db.withDynSession {
+        val actualBalances = TableQuery[Balances].list().toSet
         actualBalances must be equalTo(sampleBalances)
       }
    }

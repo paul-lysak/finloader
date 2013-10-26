@@ -7,8 +7,6 @@ import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Income, Incomes}
 import scala.slick.lifted.TableQuery
-
-//import scala.slick.driver.PostgresDriver.simple._
 import Database.dynamicSession
 import org.slf4j.LoggerFactory
 import finloader.{DbUtils, FinloaderUtils}

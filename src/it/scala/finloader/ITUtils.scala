@@ -2,10 +2,13 @@ package finloader
 
 import com.typesafe.config.ConfigFactory
 import java.io.File
-import scala.slick.session.Database
+import scala.slick.lifted.TableQuery
+
+//import scala.slick.session.Database
+import scala.slick.jdbc.JdbcBackend.Database
 import finloader.domain.{Incomes, Balances, Expenses}
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+import scala.slick.driver.JdbcDriver.simple._
+import Database.dynamicSession
 
 /**
  * @author Paul Lysak
@@ -23,10 +26,10 @@ object ITUtils {
 
   private def createSchema(d: Database) {
     println("creating DB schema...")
-    d withSession  {
-      Expenses.ddl.create
-      Balances.ddl.create
-      Incomes.ddl.create
+    d withDynSession {
+      TableQuery[Expenses].ddl.create
+      TableQuery[Balances].ddl.create
+      TableQuery[Incomes].ddl.create
     }
   }
 }

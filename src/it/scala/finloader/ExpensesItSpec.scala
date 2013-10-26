@@ -2,16 +2,14 @@ package finloader
 
 import org.specs2.mutable.Specification
 import ITUtils.db
-import scala.slick.session.Database
-import java.sql.Date
+import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.driver.JdbcDriver.simple._
+import scala.slick.lifted.TableQuery
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.ExpensesLoader
-
-//import scala.slick.lifted.Query
 import finloader.domain.{Expenses, Expense}
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
+import Database.dynamicSession
 
 /**
  * @author Paul Lysak
@@ -39,9 +37,10 @@ class ExpensesItSpec extends Specification {
   }
 
   private def cleanExpenses {
-      db.withSession {
-          Query(Expenses).delete
-          val exp = Query(Expenses).list().toSet
+      db.withDynSession {
+          val query = TableQuery[Expenses]
+          query.delete
+          val exp = query.list().toSet
           exp must be equalTo(Set())
       }
   }
@@ -49,8 +48,8 @@ class ExpensesItSpec extends Specification {
   private def loadFile(path: String, separator: Char, expectedContent: Set[Expense]) {
       val url1 = getClass.getResource(path)
       loader(separator).load(url1, "pref_")
-      db.withSession {
-        val actualExpenses = Query(Expenses).list().toSet
+      db.withDynSession {
+        val actualExpenses = TableQuery[Expenses].list().toSet
         actualExpenses must be equalTo(expectedContent)
       }
   }
