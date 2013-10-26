@@ -1,4 +1,3 @@
-- Get rid of PostgreSQL driver dependency in code
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
 - Get rid of JDBC URL in configs
