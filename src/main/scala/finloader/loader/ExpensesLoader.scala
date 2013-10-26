@@ -1,10 +1,13 @@
 package finloader.loader
 
 import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.driver.JdbcDriver.simple._
 import java.io.{File}
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Expenses, Expense}
+import scala.slick.lifted.TableQuery
+
 //import scala.slick.driver.PostgresDriver.simple._
 import Database.dynamicSession
 import org.slf4j.LoggerFactory
@@ -32,7 +35,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           val r = row.toIndexedSeq
           count += 1
           Expense(id = idPrefix+r(p("id")),
-            date = parseDate(r(p("date"))),
+//            date = parseDate(r(p("date"))),
             amount = (r(p("amount")).toDouble * 100).toLong,
             category = r(p("category")),
             comment = r(p("comment")))
@@ -42,10 +45,13 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     })
 
-    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
+//    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
+    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, 0, null) #:: defaultedExpenses).zip(expensesStream).
           map({case (prevExp, thisExp) =>
-        val date = if(thisExp.date == null) prevExp.date else thisExp.date
-        thisExp.copy(date = date)})
+//        val date = if(thisExp.date == null) prevExp.date else thisExp.date
+//        thisExp.copy(date = date)
+        thisExp
+    })
 
    defaultedExpenses.foreach(upsert)
 
@@ -56,16 +62,26 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
 
   private def upsert(expense: Expense) {
-    db.withSession {
-      Query(Expenses).map(_.id).filter(_ === expense.id).firstOption() match {
+    db.withDynSession {
+      val expQuery = TableQuery[Expenses]
+      expQuery.map(_.id).filter(_ === expense.id).firstOption() match {
         case Some(existingId) => {
           log.debug(s"Update $existingId")
-          Expenses.where(_.id === existingId).update(expense)
+          expQuery.where(_.id === existingId).update(expense)
         }
         case None => {
-          Expenses.insert(expense)
+          expQuery.insert(expense)
         }
       }
+//      Query(Expenses).map(_.id).filter(_ === expense.id).firstOption() match {
+//        case Some(existingId) => {
+//          log.debug(s"Update $existingId")
+//          Expenses.where(_.id === existingId).update(expense)
+//        }
+//        case None => {
+//          Expenses.insert(expense)
+//        }
+//      }
     }
   }//end upsert
 

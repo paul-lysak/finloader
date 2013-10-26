@@ -5,6 +5,9 @@ import java.net.URL
 import org.slf4j.LoggerFactory
 import finloader.domain.{Balance, Balances}
 import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.driver.JdbcDriver.simple._
+import scala.slick.lifted.TableQuery
+
 //import scala.slick.driver.PostgresDriver.simple._
 import Database.dynamicSession
 import java.io.File
@@ -33,7 +36,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           count += 1
           Balance(id = idPrefix+count,
             snapshotId = idPrefix+r(p("snapshotId")),
-            date = parseDate(r(p("date"))),
+//            date = parseDate(r(p("date"))),
             place = r(p("place")),
             amount = amt,
             currency = curr,
@@ -44,11 +47,14 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     }
 
-    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+//    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, 0, null) #:: defaultedBalances).zip(balances).
           map({case (prev, current) =>
         val snapshotId = if(current.snapshotId == idPrefix) prev.snapshotId else current.snapshotId
-        val date = if(current.date == null) prev.date else current.date
-        current.copy(snapshotId = snapshotId, date = date)})
+//        val date = if(current.date == null) prev.date else current.date
+//        current.copy(snapshotId = snapshotId, date = date)
+          current.copy(snapshotId = snapshotId)
+    })
 
     defaultedBalances.foreach(println)
 
@@ -62,10 +68,15 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   def ensureTablesCreated() = ??? //ensureTableCreated(Balances)
 
   def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
-    db.withSession {
-      val delCount = Balances.where(_.snapshotId === snapshotId).delete
+    db.withDynSession {
+      val balQuery = TableQuery[Balances]
+      val delCount = balQuery.where(_.snapshotId === snapshotId).delete
       log.debug(s"Deleted $delCount balances from snapshot $snapshotId")
-      Balances.insertAll(snapshotItems: _*)
+      balQuery.insertAll(snapshotItems: _*)
+
+//      val delCount = Balances.where(_.snapshotId === snapshotId).delete
+//      log.debug(s"Deleted $delCount balances from snapshot $snapshotId")
+//      Balances.insertAll(snapshotItems: _*)
     }
   }
 
