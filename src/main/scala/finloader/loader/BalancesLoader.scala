@@ -7,8 +7,6 @@ import finloader.domain.{Balance, Balances}
 import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.driver.JdbcDriver.simple._
 import scala.slick.lifted.TableQuery
-
-//import scala.slick.driver.PostgresDriver.simple._
 import Database.dynamicSession
 import java.io.File
 import finloader.{DbUtils, FinloaderUtils}
@@ -48,8 +46,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     }
 
     lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
-//    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, 0, null) #:: defaultedBalances).zip(balances).
-          map({case (prev, current) =>
+      map({case (prev, current) =>
         val snapshotId = if(current.snapshotId == idPrefix) prev.snapshotId else current.snapshotId
         val date = if(current.date == null) prev.date else current.date
         current.copy(snapshotId = snapshotId, date = date)
@@ -64,7 +61,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loaded $count balances from $source")
   }
 
-  def ensureTablesCreated() = ??? //ensureTableCreated(Balances)
+  def ensureTablesCreated() = ensureTableCreated(TableQuery[Balances])
 
   def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
     db.withDynSession {
@@ -72,10 +69,6 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
       val delCount = balQuery.where(_.snapshotId === snapshotId).delete
       log.debug(s"Deleted $delCount balances from snapshot $snapshotId")
       balQuery.insertAll(snapshotItems: _*)
-
-//      val delCount = Balances.where(_.snapshotId === snapshotId).delete
-//      log.debug(s"Deleted $delCount balances from snapshot $snapshotId")
-//      Balances.insertAll(snapshotItems: _*)
     }
   }
 

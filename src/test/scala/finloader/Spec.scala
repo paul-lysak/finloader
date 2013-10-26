@@ -1,10 +1,10 @@
 package finloader
 
 import org.specs2.mutable.Specification
-import scala.slick.session.Database
-import scala.slick.driver.PostgresDriver.simple._
-import Database.threadLocalSession
-import finloader.domain.Expenses
+//import scala.slick.session.Database
+//import scala.slick.driver.PostgresDriver.simple._
+//import Database.threadLocalSession
+//import finloader.domain.Expenses
 
 /**
  * @author Paul Lysak

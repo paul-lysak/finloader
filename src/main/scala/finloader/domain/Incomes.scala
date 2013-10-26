@@ -2,13 +2,9 @@ package finloader.domain
 
 import com.github.tototoshi.slick.JodaSupport._
 import org.joda.time.LocalDate
-
-//import scala.slick.session.Database
 import scala.slick.driver.JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
 import scala.slick.lifted.Tag
-//import scala.slick.driver.PostgresDriver.simple._
-//import Database.threadLocalSession
 import scala.slick.util.TupleMethods._
 
 /**

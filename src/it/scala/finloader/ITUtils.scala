@@ -3,7 +3,6 @@ package finloader
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.lifted.TableQuery
-
 //import scala.slick.session.Database
 import scala.slick.jdbc.JdbcBackend.Database
 import finloader.domain.{Incomes, Balances, Expenses}
@@ -30,6 +29,8 @@ object ITUtils {
       TableQuery[Expenses].ddl.create
       TableQuery[Balances].ddl.create
       TableQuery[Incomes].ddl.create
+//      val tq: TableQuery[_, _#TableElementType] = TableQuery[Incomes]
+//      tq.ddl.create
     }
   }
 }

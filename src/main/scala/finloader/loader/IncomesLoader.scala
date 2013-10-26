@@ -57,7 +57,7 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
      log.info(s"Loaded $count incomes from $source")
    }
 
-   def ensureTablesCreated() = ??? //ensureTableCreated(Incomes)
+   def ensureTablesCreated() = ensureTableCreated(TableQuery[Incomes])
 
    private def upsert(income: Income) {
      db.withDynSession {

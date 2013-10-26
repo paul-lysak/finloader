@@ -2,7 +2,6 @@ import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.jdbc.StaticQuery
 import scala.slick.session.Database
-import scala.slick.driver.PostgresDriver.simple._
 import Database.threadLocalSession
 
 
