@@ -2,7 +2,7 @@ name := "finloader_build"
 
 version := "1.0"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.2"
 
 libraryDependencies ++= List(
   // use the right Slick version here:
