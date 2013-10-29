@@ -1,3 +1,6 @@
+import sbtassembly.Plugin._
+import AssemblyKeys._
+
 name := "finloader"
 
 version := "1.0"
@@ -18,3 +21,14 @@ libraryDependencies ++= List(
   "org.slf4j" % "slf4j-log4j12" % "1.6.4",
   "org.specs2" %% "specs2" % "1.14" % "test,it"
 )
+
+assemblySettings
+
+//mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+//  {
+//    case PathList("scala", xs @ _*) => MergeStrategy.first
+//    case x => old(x)
+////    case _ => MergeStrategy.first
+//  }
+//}
+

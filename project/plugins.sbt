@@ -14,4 +14,4 @@ addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.0-SNAPSHOT")
 //    scalaV = "2.10"    // Scala version compiled the plugin
 //)
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.9.1")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.10.0")
