@@ -1,5 +1,4 @@
 - Investigate assembly issues: includes current scala, ignores CSV library when excluding scala library. Maybe report bugs.
-- Write user guide
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes
 - Get rid of JDBC URL in configs
