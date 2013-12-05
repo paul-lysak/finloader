@@ -17,13 +17,13 @@ more advanced business intelligence tools is possible.
 
 From project root folder:
 
-   sbt assembly
+    sbt assembly
 
 Then you'll get `target/scala-2.10/finloader-assembly-1.0.jar` file that you may run in java environment
 
 If you want to run integration tests - copy `it.conf.sample` to `it.conf`, put there correct values and run
 
-   sbt it:test
+    sbt it:test
 
 At the moment project doesn't have unit tests - only integrational.
 
