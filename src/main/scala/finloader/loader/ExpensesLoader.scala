@@ -9,7 +9,7 @@ import finloader.domain.{Expenses, Expense}
 import scala.slick.lifted.TableQuery
 import Database.dynamicSession
 import org.slf4j.LoggerFactory
-import finloader.DbUtils
+import finloader.{FinloaderUtils, DbUtils}
 import finloader.FinloaderUtils._
 
 
@@ -29,12 +29,15 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     val expensesStream: Stream[Expense] =  (reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
+
         for(row <- body) yield {
           val r = row.toIndexedSeq
+          val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           count += 1
           Expense(id = idPrefix+r(p("id")),
             date = parseDate(r(p("date"))),
-            amount = (r(p("amount")).toDouble * 100).toLong,
+            amount = amt,
+            currency = curr,
             category = r(p("category")),
             comment = r(p("comment")))
         }
@@ -43,7 +46,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     })
 
-    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null) #:: defaultedExpenses).zip(expensesStream).
+    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null, null) #:: defaultedExpenses).zip(expensesStream).
 //    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, 0, null) #:: defaultedExpenses).zip(expensesStream).
           map({case (prevExp, thisExp) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date

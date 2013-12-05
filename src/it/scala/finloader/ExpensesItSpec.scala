@@ -34,6 +34,13 @@ class ExpensesItSpec extends Specification {
       cleanExpenses
       loadFile("/exp_201306_sk.csv", ',', skippedDateExpenses)
     }
+
+    "recognize currency" in {
+      cleanExpenses
+
+      loadFile("/exp_curr.csv", ',', sampleExpensesCurr)
+   }
+
   }
 
   private def cleanExpenses {
@@ -55,24 +62,31 @@ class ExpensesItSpec extends Specification {
   }
 
   private val sampleExpenses = Set(
-    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
-    Expense(id = "pref_2", date = new LocalDate(2013, 06, 11), amount = 35050, category = "household"),
-    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L")
+    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, currency = "UAH", category = "food", comment = "supermarket"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 11), amount = 35050, currency = "UAH", category = "household"),
+    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, currency = "UAH", category = "car_fuel", comment = "30L")
   )
 
   private val mergedExpenses = Set(
-    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
-    Expense(id = "pref_2", date = new LocalDate(2013, 06, 15), amount = 55050, category = "household", comment = "repair something"),
-    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L"),
-    Expense(id = "pref_4", date = new LocalDate(2013, 06, 13), amount = 22000, category = "food", comment = "fruits")
+    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, currency = "UAH", category = "food", comment = "supermarket"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 15), amount = 55050, currency = "UAH",  category = "household", comment = "repair something"),
+    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 32000, currency = "UAH",  category = "car_fuel", comment = "30L"),
+    Expense(id = "pref_4", date = new LocalDate(2013, 06, 13), amount = 22000, currency = "UAH",  category = "food", comment = "fruits")
   )
 
   private val skippedDateExpenses = Set(
-    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, category = "food", comment = "supermarket"),
-    Expense(id = "pref_2", date = new LocalDate(2013, 06, 10), amount = 35050, category = "household"),
-    Expense(id = "pref_3", date = new LocalDate(2013, 06, 10), amount = 7000, category = "transport", comment = "taxi"),
-    Expense(id = "pref_4", date = new LocalDate(2013, 06, 12), amount = 32000, category = "car_fuel", comment = "30L")
+    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, currency = "UAH",  category = "food", comment = "supermarket"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 10), amount = 35050, currency = "UAH",  category = "household"),
+    Expense(id = "pref_3", date = new LocalDate(2013, 06, 10), amount = 7000, currency = "UAH",  category = "transport", comment = "taxi"),
+    Expense(id = "pref_4", date = new LocalDate(2013, 06, 12), amount = 32000, currency = "UAH",  category = "car_fuel", comment = "30L")
   )
+
+  private val sampleExpensesCurr = Set(
+    Expense(id = "pref_1", date = new LocalDate(2013, 06, 10), amount = 10000, currency = "UAH", category = "food", comment = "supermarket"),
+    Expense(id = "pref_2", date = new LocalDate(2013, 06, 11), amount = 3550, currency = "USD", category = "household"),
+    Expense(id = "pref_3", date = new LocalDate(2013, 06, 12), amount = 3200, currency = "EUR", category = "car_fuel", comment = "30L")
+  )
+
 
   private def loader(sep: Char) = new ExpensesLoader(db)(new DefaultCSVFormat {override val separator = sep})
 }

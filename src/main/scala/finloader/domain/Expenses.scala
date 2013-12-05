@@ -15,7 +15,7 @@ import TupleMethods._
  *         Date: 02.07.13
  *         Time: 23:05
  */
-case class Expense(id: String, date: LocalDate, amount: Long, category: String, comment: String = "")
+case class Expense(id: String, date: LocalDate, amount: Long, currency: String, category: String, comment: String = "")
 //case class Expense(id: String, amount: Long, category: String, comment: String = "")
 
 class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
@@ -25,10 +25,12 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
 
   def amount = column[Long]("amount")
 
+  def currency = column[String]("currency")
+
   def category = column[String]("category")
 
   def comment = column[String]("comment")
 
-  def * = id ~ date ~ amount ~ category ~ comment <> (Expense.tupled, Expense.unapply _)
+  def * = id ~ date ~ amount ~ currency ~ category ~ comment <> (Expense.tupled, Expense.unapply _)
 //  def * = id ~ amount ~ category ~ comment <> (Expense.tupled, Expense.unapply _)
 }
