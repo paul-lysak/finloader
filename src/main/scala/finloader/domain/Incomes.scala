@@ -1,13 +1,11 @@
 package finloader.domain
 
-//import com.github.tototoshi.slick.JodaSupport._
 import com.github.tototoshi.slick.GenericJodaSupport
 import org.joda.time.LocalDate
 import scala.slick.driver.JdbcDriver
 import JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
 import scala.slick.lifted.Tag
-import scala.slick.util.TupleMethods._
 
 /**
  * @author Paul Lysak
@@ -15,7 +13,6 @@ import scala.slick.util.TupleMethods._
  *         Time: 23:05
  */
 case class Income(id: String, date: LocalDate, amount: Long, currency: String, source: String, comment: String = "")
-//case class Income(id: String, amount: Long, currency: String, source: String, comment: String = "")
 
 class Incomes(tag: Tag) extends Table[Income](tag, "income") {
   object JdbcJodaSupport extends GenericJodaSupport(JdbcDriver)
@@ -33,6 +30,5 @@ class Incomes(tag: Tag) extends Table[Income](tag, "income") {
 
   def comment = column[String]("comment")
 
-//  def * = id ~ date ~ amount ~ currency ~ source ~ comment <> (Income.tupled, Income.unapply _)
   def * = (id, date, amount, currency, source, comment) <> (Income.tupled, Income.unapply _)
 }

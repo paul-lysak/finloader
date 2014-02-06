@@ -15,7 +15,7 @@ import Database.dynamicSession
 trait DbUtils {
   def ensureTableCreated[E <: Table[_]](tableQueryObject: TableQuery[E])(implicit db: Database) {
     db.withDynSession {
-        if(MTable.getTables(tableQueryObject.toNode.asInstanceOf[TableNode].tableName).firstOption().isEmpty)
+        if(MTable.getTables(tableQueryObject.unpackable.value.tableName).firstOption().isEmpty)
           tableQueryObject.ddl.create
     }
   }

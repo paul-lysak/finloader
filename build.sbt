@@ -14,7 +14,6 @@ libraryDependencies ++= List(
   "com.typesafe.slick" %% "slick" % "2.0.0",
   "com.typesafe" % "config" % "1.0.2",
   "com.github.tototoshi" %% "scala-csv" % "0.8.0",
-//  "com.github.tototoshi" %% "scala-csv" % "1.0.0-SNAPSHOT",
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.2",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.0",
