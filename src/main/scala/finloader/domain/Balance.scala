@@ -1,12 +1,14 @@
 package finloader.domain
 
 import org.joda.time.LocalDate
-import com.github.tototoshi.slick.JodaSupport._
-import scala.slick.driver.JdbcDriver._
+//import com.github.tototoshi.slick.JodaSupport._
+import com.github.tototoshi.slick.GenericJodaSupport
+import scala.slick.driver.JdbcDriver
+import JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
 import scala.slick.lifted.Tag
-import scala.slick.util.TupleMethods
-import TupleMethods._
+//import scala.slick.util.TupleMethods
+//import TupleMethods._
 
 /**
  * @author Paul Lysak
@@ -20,6 +22,8 @@ case class Balance(id: String, snapshotId: String, date: LocalDate, place: Strin
 //}
 
 class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
+  object JdbcJodaSupport extends GenericJodaSupport(JdbcDriver)
+  import JdbcJodaSupport._
 
   def id = column[String]("id", O.PrimaryKey)
 
@@ -37,5 +41,6 @@ class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
 
 //  def * = (id, snapshotId, place, amount, currency, comment) <> (Balance.tupled, Balance.unapply _)
 //  def * = id ~ snapshotId ~ place ~ amount ~ currency ~ comment <> (Balance.tupled, Balance.unapply _)
-  def * = id ~ snapshotId ~ date ~ place ~ amount ~ currency ~ comment <> (Balance.tupled, Balance.unapply _)
+//  def * = id ~ snapshotId ~ date ~ place ~ amount ~ currency ~ comment <> (Balance.tupled, Balance.unapply _)
+  def * = (id, snapshotId, date, place, amount, currency, comment) <> (Balance.tupled, Balance.unapply _)
 }
