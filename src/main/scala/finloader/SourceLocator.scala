@@ -14,6 +14,7 @@ class SourceLocator {
   val locateExpenses = locate(ExpensesFilter) _
   val locateBalances = locate(BalancesFilter) _
   val locateIncomes = locate(IncomesFilter) _
+  val locateRates = locate(RatesFilter) _
 
   def locate(filter: FilenameFilter)(baseUrl: URL): Seq[URL] =  {
     val file = new File(baseUrl.toURI)
@@ -25,6 +26,7 @@ class SourceLocator {
   private object ExpensesFilter extends Filter("exp_")
   private object BalancesFilter extends Filter("chk_")
   private object IncomesFilter extends Filter("inc_")
+  private object RatesFilter extends Filter("rate_")
 
   private class Filter(prefix: String) extends FilenameFilter {
     private def sub(dir: File, name: String): File =

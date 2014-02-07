@@ -6,7 +6,7 @@ import java.io.File
 import scala.collection.JavaConversions._
 import com.github.tototoshi.csv.DefaultCSVFormat
 import org.slf4j.LoggerFactory
-import finloader.loader.{IncomesLoader, BalancesLoader, ExpensesLoader}
+import finloader.loader.{ExchangeRatesLoader, IncomesLoader, BalancesLoader, ExpensesLoader}
 
 /**
  * @author Paul Lysak
@@ -25,8 +25,9 @@ class FinloaderContext(configFile: File) {
   val expensesLoader = new ExpensesLoader(db)
   val balancesLoader = new BalancesLoader(db)
   val incomesLoader = new IncomesLoader(db)
+  val ratesLoader = new ExchangeRatesLoader(db)
 
-  val finloaderService = new FinloaderService(locator, expensesLoader, balancesLoader, incomesLoader)
+  val finloaderService = new FinloaderService(locator, expensesLoader, balancesLoader, incomesLoader, ratesLoader)
 
   private val log = LoggerFactory.getLogger(classOf[FinloaderContext])
 }

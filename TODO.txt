@@ -1,4 +1,4 @@
-- propose patch for jodatime-slick adapter
+- Clean up IT libs versions
 - Investigate assembly issues: includes current scala, ignores CSV library when excluding scala library. Maybe report bugs.
 - Tune DB types (for example, TEXT for comment. Smaller size of category field)
 - Specify indexes

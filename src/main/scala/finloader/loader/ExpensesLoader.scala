@@ -47,7 +47,6 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     })
 
     lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null, null) #:: defaultedExpenses).zip(expensesStream).
-//    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, 0, null) #:: defaultedExpenses).zip(expensesStream).
           map({case (prevExp, thisExp) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date
         thisExp.copy(date = date)
@@ -73,15 +72,6 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           expQuery.insert(expense)
         }
       }
-//      Query(Expenses).map(_.id).filter(_ === expense.id).firstOption() match {
-//        case Some(existingId) => {
-//          log.debug(s"Update $existingId")
-//          Expenses.where(_.id === existingId).update(expense)
-//        }
-//        case None => {
-//          Expenses.insert(expense)
-//        }
-//      }
     }
   }//end upsert
 
