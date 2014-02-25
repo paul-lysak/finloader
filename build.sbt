@@ -16,7 +16,7 @@ libraryDependencies ++= List(
   "com.github.tototoshi" %% "scala-csv" % "0.8.0",
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.2",
-  "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.0",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "1.0.1",
   "postgresql" % "postgresql" % "9.1-901.jdbc4",
   "org.rogach" %% "scallop" % "0.9.3",
   "org.slf4j" % "slf4j-log4j12" % "1.6.4",

@@ -1,6 +1,6 @@
 package finloader.domain
 
-import com.github.tototoshi.slick.GenericJodaSupport
+import com.github.tototoshi.slick.JdbcJodaSupport._
 import org.joda.time.LocalDate
 import scala.slick.driver.JdbcDriver
 import JdbcDriver._
@@ -15,9 +15,6 @@ import scala.slick.lifted.Tag
 case class Income(id: String, date: LocalDate, amount: Long, currency: String, source: String, comment: String = "")
 
 class Incomes(tag: Tag) extends Table[Income](tag, "income") {
-  object JdbcJodaSupport extends GenericJodaSupport(JdbcDriver)
-  import JdbcJodaSupport._
-
   def id = column[String]("id", O.PrimaryKey)
 
   def date = column[LocalDate]("date")

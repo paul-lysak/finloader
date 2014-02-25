@@ -1,7 +1,7 @@
 package finloader.domain
 
 import org.joda.time.LocalDate
-import com.github.tototoshi.slick.GenericJodaSupport
+import com.github.tototoshi.slick.JdbcJodaSupport._
 import scala.slick.driver.JdbcDriver
 import JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
@@ -16,9 +16,6 @@ import scala.slick.lifted.Tag
 case class Balance(id: String, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
 
 class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
-  object JdbcJodaSupport extends GenericJodaSupport(JdbcDriver)
-  import JdbcJodaSupport._
-
   def id = column[String]("id", O.PrimaryKey)
 
   def snapshotId = column[String]("snapshotId")

@@ -2,7 +2,7 @@ package finloader.domain
 
 import org.joda.time.LocalDate
 import scala.slick.lifted.Tag
-import com.github.tototoshi.slick.GenericJodaSupport
+import com.github.tototoshi.slick.JdbcJodaSupport._
 import scala.slick.driver.JdbcDriver
 import JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
@@ -14,9 +14,6 @@ import scala.slick.driver.JdbcDriver.Implicit._
 case class ExchangeRate(id: String, date: LocalDate, currency: String, rate: BigDecimal, comment: String = "")
 
 class ExchangeRates (tag: Tag) extends Table[ExchangeRate](tag, "rate") {
-  object JdbcJodaSupport extends GenericJodaSupport(JdbcDriver)
-  import JdbcJodaSupport._
-
   def id = column[String]("id", O.PrimaryKey)
 
   def date = column[LocalDate]("date")
