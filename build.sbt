@@ -5,7 +5,7 @@ name := "finloader"
 
 version := "1.0"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -33,13 +33,13 @@ assemblySettings
 //  }
 //}
 
-excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
-  cp filter {_.data.getName == "scala-library-2.10.1.jar"}
-}
+//excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
+//  cp filter {_.data.getName == "scala-library-2.10.1.jar"}
+//}
 
 //assemblyOption in assembly ~= { _.copy(includeScala = false) }
 
 
 //com.github.retronym.SbtOneJar.oneJarSettings
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
+//net.virtualvoid.sbt.graph.Plugin.graphSettings

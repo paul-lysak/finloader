@@ -1,8 +1,7 @@
 import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.jdbc.StaticQuery
-import scala.slick.session.Database
-import Database.threadLocalSession
+import scala.slick.jdbc.JdbcBackend.Database
 
 
 object DbSetupUtils {
@@ -11,6 +10,7 @@ object DbSetupUtils {
   def create {
      drop
      setupDb.withSession {
+       implicit session =>
        println(s"Creating DB $dbName...")
        StaticQuery.updateNA(s"CREATE DATABASE $dbName").execute()
      }
@@ -18,6 +18,7 @@ object DbSetupUtils {
 
   def drop {
     setupDb.withSession {
+      implicit session =>
       println(s"Dropping DB $dbName...")
       StaticQuery.updateNA(s"DROP DATABASE IF EXISTS $dbName").execute()
     }

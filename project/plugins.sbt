@@ -4,18 +4,9 @@ import Defaults._
 
 resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.0-SNAPSHOT")
-
-//addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.4.0")
-
-//libraryDependencies += sbtPluginExtra(
-//    m = "com.github.mpeltonen" % "sbt-idea" % "1.5.0-SNAPSHOT", // Plugin module name and version
-//    sbtV = "0.13.0-M2",    // SBT version
-//    scalaV = "2.10"    // Scala version compiled the plugin
-//)
+//addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.0-SNAPSHOT")
 
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.10.0")
 
-//addSbtPlugin("org.scala-sbt.plugins" % "sbt-onejar" % "0.8")
 
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
