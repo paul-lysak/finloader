@@ -16,19 +16,19 @@ import scala.slick.lifted.Tag
 case class Balance(id: String, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
 
 class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
-  def id = column[String]("id", O.PrimaryKey)
+  def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
 
   def snapshotId = column[String]("snapshotId")
 
   def date = column[LocalDate]("date")
 
-  def place = column[String]("place")
+  def place = column[String]("place", O.DBType("VARCHAR(128)"))
 
   def amount = column[Long]("amount")
 
-  def currency = column[String]("currency")
+  def currency = column[String]("currency", O.DBType("VARCHAR(8)"))
 
-  def comment = column[String]("comment")
+  def comment = column[String]("comment", O.DBType("TEXT"))
 
   def * = (id, snapshotId, date, place, amount, currency, comment) <> (Balance.tupled, Balance.unapply _)
 }

@@ -15,17 +15,17 @@ import scala.slick.lifted.Tag
 case class Expense(id: String, date: LocalDate, amount: Long, currency: String, category: String, comment: String = "")
 
 class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
-  def id = column[String]("id", O.PrimaryKey)
+  def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
 
   def date = column[LocalDate]("date")
 
   def amount = column[Long]("amount")
 
-  def currency = column[String]("currency")
+  def currency = column[String]("currency", O.DBType("VARCHAR(8)"))
 
-  def category = column[String]("category")
+  def category = column[String]("category", O.DBType("VARCHAR(64)"))
 
-  def comment = column[String]("comment")
+  def comment = column[String]("comment", O.DBType("TEXT"))
 
   def * = (id, date, amount, currency, category, comment) <> (Expense.tupled, Expense.unapply _)
 }

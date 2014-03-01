@@ -14,15 +14,15 @@ import scala.slick.driver.JdbcDriver.Implicit._
 case class ExchangeRate(id: String, date: LocalDate, currency: String, rate: BigDecimal, comment: String = "")
 
 class ExchangeRates (tag: Tag) extends Table[ExchangeRate](tag, "rate") {
-  def id = column[String]("id", O.PrimaryKey)
+  def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
 
   def date = column[LocalDate]("date")
 
-  def currency = column[String]("currency")
+  def currency = column[String]("currency", O.DBType("VARCHAR(8)"))
 
   def rate = column[BigDecimal]("rate")
 
-  def comment = column[String]("comment")
+  def comment = column[String]("comment", O.DBType("TEXT"))
 
   def * = (id, date, currency, rate, comment) <> (ExchangeRate.tupled, ExchangeRate.unapply _)
 }
