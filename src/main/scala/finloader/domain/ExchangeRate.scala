@@ -24,5 +24,9 @@ class ExchangeRates (tag: Tag) extends Table[ExchangeRate](tag, "rate") {
 
   def comment = column[String]("comment", O.DBType("TEXT"))
 
+
   def * = (id, date, currency, rate, comment) <> (ExchangeRate.tupled, ExchangeRate.unapply _)
+
+
+  def dateIndex = index("exrate_date_index", date)
 }

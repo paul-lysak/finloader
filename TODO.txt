@@ -1,4 +1,4 @@
-- Specify indexes
 - Get rid of JDBC URL in configs
+- tags support
 - reuse upserts
 - warn about non-unique IDs in the document

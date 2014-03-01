@@ -27,5 +27,9 @@ class Incomes(tag: Tag) extends Table[Income](tag, "income") {
 
   def comment = column[String]("comment", O.DBType("TEXT"))
 
+
   def * = (id, date, amount, currency, source, comment) <> (Income.tupled, Income.unapply _)
+
+
+  def dateIndex = index("income_date_index", date)
 }
