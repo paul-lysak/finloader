@@ -5,7 +5,7 @@ import org.joda.time.LocalDate
 import scala.slick.driver.JdbcDriver
 import JdbcDriver._
 import scala.slick.driver.JdbcDriver.Implicit._
-import scala.slick.lifted.Tag
+import scala.slick.lifted.{TableQuery, Tag}
 
 /**
  * @author Paul Lysak
@@ -33,3 +33,23 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
 
   def dateIndex = index("expense_date_index", date)
 }
+
+case class ExpenseTag(id: Long, expenseId: String, tag: String)
+
+class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
+  //TODO find out why table with AutoInc fails to generate
+  def id = column[Long]("id", O.PrimaryKey)//, O.AutoInc)
+
+  def expenseId = column[String]("expense_id", O.DBType("VARCHAR(64)"))
+
+  def tag = column[String]("tag", O.DBType("VARCHAR(64)"))
+
+
+  def * = (id, expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _)
+
+
+  def uniquePairIndex = index("expense_tag_pair", (expenseId, tag), unique = true)
+
+  def expense = foreignKey("expense_fk", expenseId, TableQuery[Expenses])(_.id)
+}
+

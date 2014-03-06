@@ -5,7 +5,7 @@ import scala.slick.driver.JdbcDriver.simple._
 import java.io.{File}
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
-import finloader.domain.{Expenses, Expense}
+import finloader.domain.{ExpenseTags, Expenses, Expense}
 import scala.slick.lifted.TableQuery
 import Database.dynamicSession
 import org.slf4j.LoggerFactory
@@ -57,7 +57,10 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.info(s"Loaded $count expenses from $source")
   }
 
-  def ensureTablesCreated() = ensureTableCreated(TableQuery[Expenses])
+  def ensureTablesCreated() = {
+    ensureTableCreated(TableQuery[Expenses])
+    ensureTableCreated(TableQuery[ExpenseTags])
+  }
 
 
   private def upsert(expense: Expense) {
