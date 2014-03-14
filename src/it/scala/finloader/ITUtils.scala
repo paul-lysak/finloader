@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.lifted.TableQuery
 import scala.slick.jdbc.JdbcBackend.Database
-import finloader.domain.{ExchangeRates, Incomes, Balances, Expenses}
+import finloader.domain._
 import scala.slick.driver.JdbcDriver.simple._
 
 /**
@@ -29,8 +29,8 @@ object ITUtils {
       TableQuery[Balances].ddl.create
       TableQuery[Incomes].ddl.create
       TableQuery[ExchangeRates].ddl.create
-//      val tq: TableQuery[_, _#TableElementType] = TableQuery[Incomes]
-//      tq.ddl.create
+//      println("ddl="+TableQuery[ExpenseTags].ddl.createStatements.mkString("\n"))
+      TableQuery[ExpenseTags].ddl.create
     }
   }
 }

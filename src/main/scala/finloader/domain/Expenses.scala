@@ -37,8 +37,7 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
 case class ExpenseTag(id: Long, expenseId: String, tag: String)
 
 class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
-  //TODO find out why table with AutoInc fails to generate
-  def id = column[Long]("id", O.PrimaryKey)//, O.AutoInc)
+  def id = column[Long]("id", O.PrimaryKey, O.DBType("SERIAL"))//O.AutoInc doesnt' work directly
 
   def expenseId = column[String]("expense_id", O.DBType("VARCHAR(64)"))
 

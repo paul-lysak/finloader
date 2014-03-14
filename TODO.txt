@@ -1,7 +1,6 @@
 - tags support
-    - tag entity
-    - include in all generation stuff
     - integration test
+    - make sure IDs generated correctly
     - read expenses tags from file
     - update tags in DB
         - remove all irrelevant
