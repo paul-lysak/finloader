@@ -8,8 +8,8 @@ import scala.slick.lifted.TableQuery
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.ExpensesLoader
-import finloader.domain.{Expenses, Expense}
-import Database.dynamicSession
+import finloader.domain.{ExpenseTags, Expenses, Expense}
+//import Database.dynamicSession
 
 /**
  * @author Paul Lysak
@@ -24,6 +24,12 @@ class ExpensesItSpec extends Specification {
       cleanExpenses
 
       loadFile("/exp_201306.csv", ',', sampleExpenses)
+
+      db.withSession {
+        implicit session =>
+          val actualTags = TableQuery[ExpenseTags].where(_.expenseId === "pref_1").map(_.tag).list().toSet
+          actualTags must be equalTo(Set("sm1", "drink", "food"))
+      }
    }
 
     "merge expenses" in {
@@ -44,7 +50,8 @@ class ExpensesItSpec extends Specification {
   }
 
   private def cleanExpenses {
-      db.withDynSession {
+      db.withSession {
+        implicit session =>
           val query = TableQuery[Expenses]
           query.delete
           val exp = query.list().toSet
@@ -55,7 +62,8 @@ class ExpensesItSpec extends Specification {
   private def loadFile(path: String, separator: Char, expectedContent: Set[Expense]) {
       val url1 = getClass.getResource(path)
       loader(separator).load(url1, "pref_")
-      db.withDynSession {
+      db.withSession {
+        implicit session =>
         val actualExpenses = TableQuery[Expenses].list().toSet
         actualExpenses must be equalTo(expectedContent)
       }

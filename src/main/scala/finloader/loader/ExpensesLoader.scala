@@ -26,7 +26,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     log.debug(s"Using CSV separator ${csvFormat.separator}")
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
-    val expensesStream: Stream[Expense] =  (reader.toStream() match {
+    val expensesStream: Stream[(Expense, String)] =  (reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
 
@@ -34,22 +34,23 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           val r = row.toIndexedSeq
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           count += 1
-          Expense(id = idPrefix+r(p("id")),
+          (Expense(id = idPrefix+r(p("id")),
             date = parseDate(r(p("date"))),
             amount = amt,
             currency = curr,
             category = r(p("category")),
-            comment = r(p("comment")))
+            comment = r(p("comment"))),
+          r(p("tags")))
         }
       case _ =>
         log.error("can't find first line")
         Stream()
     })
 
-    lazy val defaultedExpenses: Stream[Expense] = (Expense(null, null, 0, null, null) #:: defaultedExpenses).zip(expensesStream).
-          map({case (prevExp, thisExp) =>
+    lazy val defaultedExpenses: Stream[(Expense, String)] = ((Expense(null, null, 0, null, null), "") #:: defaultedExpenses).zip(expensesStream).
+          map({case ((prevExp, prevTags), (thisExp, thisTags)) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date
-        thisExp.copy(date = date)
+      (thisExp.copy(date = date), thisTags)
     })
 
    defaultedExpenses.foreach(upsert)
@@ -63,7 +64,9 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   }
 
 
-  private def upsert(expense: Expense) {
+  //TODO refactor signature
+  private def upsert(expenseAndTags: (Expense, String)) {
+    val expense = expenseAndTags._1
     db.withDynSession {
       val expQuery = TableQuery[Expenses]
       expQuery.map(_.id).filter(_ === expense.id).firstOption() match {

@@ -1,7 +1,6 @@
 - tags support
-    - integration test
-    - make sure IDs generated correctly
     - read expenses tags from file
+    - make sure IDs generated correctly
     - update tags in DB
         - remove all irrelevant
         - add all missing
