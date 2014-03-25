@@ -5,9 +5,8 @@ import scala.slick.driver.JdbcDriver.simple._
 import java.io.{File}
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
-import finloader.domain.{ExpenseTags, Expenses, Expense}
+import finloader.domain.{ExpenseTag, ExpenseTags, Expenses, Expense}
 import scala.slick.lifted.TableQuery
-import Database.dynamicSession
 import org.slf4j.LoggerFactory
 import finloader.{FinloaderUtils, DbUtils}
 import finloader.FinloaderUtils._
@@ -67,7 +66,8 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   //TODO refactor signature
   private def upsert(expenseAndTags: (Expense, String)) {
     val expense = expenseAndTags._1
-    db.withDynSession {
+    db.withSession {
+      implicit session =>
       val expQuery = TableQuery[Expenses]
       expQuery.map(_.id).filter(_ === expense.id).firstOption() match {
         case Some(existingId) => {
@@ -77,6 +77,13 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         case None => {
           expQuery.insert(expense)
         }
+        //TODO nicer solution for tags
+        val expenseTags = TableQuery[ExpenseTags]
+        expenseTags.where(_.expenseId === expense.id).delete
+        val tags = expenseAndTags._2.split(" ").filter(_.nonEmpty)
+//        expenseTags.autoInc ++= tags.map(t => ExpenseTag(None, expense.id, t))
+//        expenseTags.withoutId ++= tags.map(t => (expense.id, t))
+          expenseTags.map(et => (et.expenseId, et.tag)) ++= tags.map(t => (expense.id, t))
       }
     }
   }//end upsert

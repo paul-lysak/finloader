@@ -1,5 +1,4 @@
 - tags support
-    - read expenses tags from file
     - make sure IDs generated correctly
     - update tags in DB
         - remove all irrelevant

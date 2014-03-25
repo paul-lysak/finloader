@@ -28,7 +28,7 @@ class ExpensesItSpec extends Specification {
       db.withSession {
         implicit session =>
           val actualTags = TableQuery[ExpenseTags].where(_.expenseId === "pref_1").map(_.tag).list().toSet
-          actualTags must be equalTo(Set("sm1", "drink", "food"))
+          actualTags must be equalTo(Set("sm1", "drink", "eat"))
       }
    }
 
@@ -52,6 +52,8 @@ class ExpensesItSpec extends Specification {
   private def cleanExpenses {
       db.withSession {
         implicit session =>
+          TableQuery[ExpenseTags].delete
+
           val query = TableQuery[Expenses]
           query.delete
           val exp = query.list().toSet

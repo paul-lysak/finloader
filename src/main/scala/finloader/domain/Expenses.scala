@@ -34,7 +34,7 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
   def dateIndex = index("expense_date_index", date)
 }
 
-case class ExpenseTag(id: Long, expenseId: String, tag: String)
+case class ExpenseTag(id: Option[Long], expenseId: String, tag: String)
 
 class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
   def id = column[Long]("id", O.PrimaryKey, O.DBType("SERIAL"))//O.AutoInc doesnt' work directly
@@ -44,7 +44,11 @@ class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
   def tag = column[String]("tag", O.DBType("VARCHAR(64)"))
 
 
-  def * = (id, expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _)
+//  def autoInc = (expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _) returning id
+
+  def * = (id.?, expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _)
+
+//  def withoutId = (expenseId, tag) returning id
 
 
   def uniquePairIndex = index("expense_tag_pair", (expenseId, tag), unique = true)
