@@ -52,7 +52,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
       (thisExp.copy(date = date), thisTags)
     })
 
-   defaultedExpenses.foreach(upsert)
+   defaultedExpenses.foreach(upsert.tupled)
 
     log.info(s"Loaded $count expenses from $source")
   }
@@ -63,9 +63,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   }
 
 
-  //TODO refactor signature
-  private def upsert(expenseAndTags: (Expense, String)) {
-    val expense = expenseAndTags._1
+  private val upsert = {(expense: Expense, tagsString: String) =>
     db.withSession {
       implicit session =>
       val expQuery = TableQuery[Expenses]
@@ -77,16 +75,18 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         case None => {
           expQuery.insert(expense)
         }
-        //TODO nicer solution for tags
-        val expenseTags = TableQuery[ExpenseTags]
-        expenseTags.where(_.expenseId === expense.id).delete
-        val tags = expenseAndTags._2.split(" ").filter(_.nonEmpty)
-//        expenseTags.autoInc ++= tags.map(t => ExpenseTag(None, expense.id, t))
-//        expenseTags.withoutId ++= tags.map(t => (expense.id, t))
-          expenseTags.map(et => (et.expenseId, et.tag)) ++= tags.map(t => (expense.id, t))
+
+        updateTags(expense.id, tagsString)
       }
     }
   }//end upsert
+
+  private def updateTags(expenseId: String, tagsString: String)(implicit session: Session) {
+        val expenseTags = TableQuery[ExpenseTags]
+        expenseTags.where(_.expenseId === expenseId).delete
+        val tags = tagsString.split(" ").filter(_.nonEmpty)
+        expenseTags.map(et => (et.expenseId, et.tag)) ++= tags.map(t => (expenseId, t))
+  }
 
   val log = LoggerFactory.getLogger(classOf[ExpensesLoader])
 }
