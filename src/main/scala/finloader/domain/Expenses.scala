@@ -44,15 +44,16 @@ class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
   def tag = column[String]("tag", O.DBType("VARCHAR(64)"))
 
 
-//  def autoInc = (expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _) returning id
 
   def * = (id.?, expenseId, tag) <> (ExpenseTag.tupled, ExpenseTag.unapply _)
 
-//  def withoutId = (expenseId, tag) returning id
 
 
   def uniquePairIndex = index("expense_tag_pair", (expenseId, tag), unique = true)
 
+  def tagIndex = index("expensetag_tag_index", tag)
+
   def expense = foreignKey("expense_fk", expenseId, TableQuery[Expenses])(_.id)
+
 }
 

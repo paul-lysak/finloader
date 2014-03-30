@@ -1,9 +1,5 @@
-- tags support
-    - make sure IDs generated correctly
-        - remove all irrelevant
-        - add all missing
-    - add indexing
 - reuse upserts
 - improve loading speed
     - create table which tracks which files are applied and their checksums
 - warn about non-unique IDs in the document
+

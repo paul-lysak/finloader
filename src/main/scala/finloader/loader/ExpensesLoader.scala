@@ -75,9 +75,8 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         case None => {
           expQuery.insert(expense)
         }
-
-        updateTags(expense.id, tagsString)
       }
+      updateTags(expense.id, tagsString)
     }
   }//end upsert
 
@@ -85,7 +84,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         val expenseTags = TableQuery[ExpenseTags]
         expenseTags.where(_.expenseId === expenseId).delete
         val tags = tagsString.split(" ").filter(_.nonEmpty)
-//    println(s"load tags $expenseId $tags")
+//    println(s"load tags $expenseId ${tags.toList}")
         expenseTags.map(et => (et.expenseId, et.tag)) ++= tags.map(t => (expenseId, t))
   }
 
