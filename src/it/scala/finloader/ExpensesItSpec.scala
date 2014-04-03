@@ -30,7 +30,7 @@ class ExpensesItSpec extends Specification {
           val t = TableQuery[ExpenseTags].where(_.expenseId === "pref_1").list().toSet
 
           val actualTags = TableQuery[ExpenseTags].where(_.expenseId === "pref_1").map(_.tag).list().toSet
-          actualTags must be equalTo(Set("sm1", "drink", "eat"))
+          actualTags must be equalTo(Set("food", "sm1", "drink", "eat"))
       }
    }
 
