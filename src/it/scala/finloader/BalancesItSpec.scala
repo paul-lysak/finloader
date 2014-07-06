@@ -10,12 +10,15 @@ import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.BalancesLoader
 import finloader.domain.{Balance, Balances, Expenses, Expense}
 import Database.dynamicSession
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
 /**
  * @author Paul Lysak
  *         Date: 02.07.13
  *         Time: 23:37
  */
+@RunWith(classOf[JUnitRunner])
 class BalancesItSpec extends Specification {
 
   "BalancesLoader" should {

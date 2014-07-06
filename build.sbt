@@ -20,7 +20,8 @@ libraryDependencies ++= List(
   "postgresql" % "postgresql" % "9.1-901.jdbc4",
   "org.rogach" %% "scallop" % "0.9.3",
   "org.slf4j" % "slf4j-log4j12" % "1.6.4",
-  "org.specs2" %% "specs2" % "1.14" % "test,it"
+  "org.specs2" %% "specs2" % "1.14" % "test,it",
+  "junit" % "junit" % "4.8.1" % "test,it"
 )
 
 assemblySettings
@@ -43,3 +44,12 @@ assemblySettings
 //com.github.retronym.SbtOneJar.oneJarSettings
 
 //net.virtualvoid.sbt.graph.Plugin.graphSettings
+
+EclipseKeys.configurations := Set(Compile, Test, IntegrationTest)
+
+//hack for sbteclipse
+//unmanagedSourceDirectories in Compile <++= baseDirectory { base =>
+//  Seq(
+//    base / "src/it/scala"
+//  )
+//}
