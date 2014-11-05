@@ -12,10 +12,12 @@ import scala.slick.lifted.{TableQuery, Tag}
  *         Date: 02.07.13
  *         Time: 23:05
  */
-case class Expense(id: String, date: LocalDate, amount: Long, currency: String, category: String, comment: String = "")
+case class Expense(id: String, fileCode: String, date: LocalDate, amount: Long, currency: String, category: String, comment: String = "")
 
 class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
   def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
+
+  def fileCode = column[String]("fileCode", O.DBType("VARCHAR(128)"))
 
   def date = column[LocalDate]("date")
 
@@ -28,7 +30,7 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
   def comment = column[String]("comment", O.DBType("TEXT"))
 
 
-  def * = (id, date, amount, currency, category, comment) <> (Expense.tupled, Expense.unapply _)
+  def * = (id, fileCode, date, amount, currency, category, comment) <> (Expense.tupled, Expense.unapply _)
 
 
   def dateIndex = index("expense_date_index", date)

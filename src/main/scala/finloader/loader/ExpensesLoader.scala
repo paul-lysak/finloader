@@ -23,17 +23,19 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   def load(source: URL, idPrefix: String = "") {
     log.info(s"Loading expenses from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
+    clear(idPrefix)
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
     val expensesStream: Stream[(Expense, String)] =  (reader.toStream() match {
       case firstRow #:: body =>
         val p = firstRow.zipWithIndex.toMap
 
-        for(row <- body) yield {
+        for((row, rowIndex) <- body.zipWithIndex) yield {
           val r = row.toIndexedSeq
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           count += 1
-          (Expense(id = idPrefix+r(p("id")),
+          (Expense(id = idPrefix+(rowIndex+1),
+            fileCode = idPrefix,
             date = parseDate(r(p("date"))),
             amount = amt,
             currency = curr,
@@ -46,13 +48,13 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     })
 
-    lazy val defaultedExpenses: Stream[(Expense, String)] = ((Expense(null, null, 0, null, null), "") #:: defaultedExpenses).zip(expensesStream).
+    lazy val defaultedExpenses: Stream[(Expense, String)] = ((Expense(null, null, null, 0, null, null), "") #:: defaultedExpenses).zip(expensesStream).
           map({case ((prevExp, prevTags), (thisExp, thisTags)) =>
         val date = if(thisExp.date == null) prevExp.date else thisExp.date
       (thisExp.copy(date = date), thisTags)
     })
 
-   defaultedExpenses.foreach(upsert.tupled)
+   defaultedExpenses.foreach(insert.tupled)
 
     log.info(s"Loaded $count expenses from $source")
   }
@@ -62,23 +64,41 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     ensureTableCreated(TableQuery[ExpenseTags])
   }
 
+  private def clear(fileCode: String) {
+    db.withSession {implicit session =>
+      val expenseTags = TableQuery[ExpenseTags]
+      val expQuery = TableQuery[Expenses]
+      expenseTags.where(t => expQuery.where(_.id === t.expenseId).exists).delete
+      expQuery.where(_.fileCode === fileCode).delete
+    }
+  }
 
-  private val upsert = {(expense: Expense, tagsString: String) =>
+//  private val upsert = {(expense: Expense, tagsString: String) =>
+//    db.withSession {
+//      implicit session =>
+//      val expQuery = TableQuery[Expenses]
+//      expQuery.map(_.id).filter(_ === expense.id).firstOption() match {
+//        case Some(existingId) => {
+//          log.debug(s"Update $existingId")
+//          expQuery.where(_.id === existingId).update(expense)
+//        }
+//        case None => {
+//          expQuery.insert(expense)
+//        }
+//      }
+//      updateTags(expense.id, expense.category, tagsString)
+//    }
+//  }//end upsert
+
+  private val insert = {(expense: Expense, tagsString: String) =>
     db.withSession {
       implicit session =>
       val expQuery = TableQuery[Expenses]
-      expQuery.map(_.id).filter(_ === expense.id).firstOption() match {
-        case Some(existingId) => {
-          log.debug(s"Update $existingId")
-          expQuery.where(_.id === existingId).update(expense)
-        }
-        case None => {
-          expQuery.insert(expense)
-        }
-      }
+      expQuery.insert(expense)
       updateTags(expense.id, expense.category, tagsString)
     }
-  }//end upsert
+
+  }
 
   private def updateTags(expenseId: String, category: String, tagsString: String)(implicit session: Session) {
         val expenseTags = TableQuery[ExpenseTags]
