@@ -1,7 +1,7 @@
 - auto-generate IDs, rewrite by files
     - introduce file field to all entities
         * expense
-        - income
+        * income
         - balance
         - rates
     - persist file name
@@ -10,8 +10,4 @@
     - table with file dates
     - save date of file after loading completes
     - check file date before loading
-- reuse upserts
-- improve loading speed
-    - create table which tracks which files are applied and their checksums
-- warn about non-unique IDs in the document
 

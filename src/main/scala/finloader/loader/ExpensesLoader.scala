@@ -34,7 +34,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           val r = row.toIndexedSeq
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           count += 1
-          (Expense(id = idPrefix+(rowIndex+1),
+          (Expense(id = idPrefix + (rowIndex + 1),
             fileCode = idPrefix,
             date = parseDate(r(p("date"))),
             amount = amt,
@@ -73,31 +73,13 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
     }
   }
 
-//  private val upsert = {(expense: Expense, tagsString: String) =>
-//    db.withSession {
-//      implicit session =>
-//      val expQuery = TableQuery[Expenses]
-//      expQuery.map(_.id).filter(_ === expense.id).firstOption() match {
-//        case Some(existingId) => {
-//          log.debug(s"Update $existingId")
-//          expQuery.where(_.id === existingId).update(expense)
-//        }
-//        case None => {
-//          expQuery.insert(expense)
-//        }
-//      }
-//      updateTags(expense.id, expense.category, tagsString)
-//    }
-//  }//end upsert
 
   private val insert = {(expense: Expense, tagsString: String) =>
-    db.withSession {
-      implicit session =>
+    db.withSession {implicit session =>
       val expQuery = TableQuery[Expenses]
       expQuery.insert(expense)
       updateTags(expense.id, expense.category, tagsString)
     }
-
   }
 
   private def updateTags(expenseId: String, category: String, tagsString: String)(implicit session: Session) {

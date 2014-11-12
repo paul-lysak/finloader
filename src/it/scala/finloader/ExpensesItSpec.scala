@@ -47,7 +47,13 @@ class ExpensesItSpec extends Specification {
       cleanExpenses
 
       loadFile("/exp_curr.csv", ',', sampleExpensesCurr)
-   }
+    }
+
+    "autogenerate IDs" in {
+      cleanExpenses
+
+      loadFile("/exp_201306_noid.csv", ',', sampleExpenses)
+    }
 
   }
 

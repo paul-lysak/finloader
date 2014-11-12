@@ -7,7 +7,6 @@ import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
 import finloader.domain.{Income, Incomes}
 import scala.slick.lifted.TableQuery
-import Database.dynamicSession
 import org.slf4j.LoggerFactory
 import finloader.{DbUtils, FinloaderUtils}
 import FinloaderUtils._
@@ -24,16 +23,18 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
    def load(source: URL, idPrefix: String = "") {
      log.info(s"Loading incomes from $source")
      log.debug(s"Using CSV separator ${csvFormat.separator}")
+     clear(idPrefix)
      val reader = CSVReader.open(new File(source.toURI))
      var count = 0
      val incomes = reader.toStream() match {
        case firstRow #:: body =>
          val p = firstRow.zipWithIndex.toMap
-         for(row <- body) yield {
+         for((row, rowIndex) <- body.zipWithIndex) yield {
            val r = row.toIndexedSeq
            val (amt, curr) = parseAmount(r(p("amount")))
            count += 1
-           Income(id = idPrefix+r(p("id")),
+           Income(id = idPrefix + (rowIndex + 1),
+             fileCode = idPrefix,
              date = parseDate(r(p("date"))),
              amount = amt,
              currency = curr,
@@ -45,34 +46,35 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
          Stream()
      }
 
-    lazy val defaultedIncomes: Stream[Income] = (Income(null, null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
-//    lazy val defaultedIncomes: Stream[Income] = (Income(null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
-          map({case (prev, curr) =>
-        val date = if(curr.date == null) prev.date else curr.date
-        curr.copy(date = date)
-    })
+     lazy val defaultedIncomes: Stream[Income] = (Income(null, null, null, 0, null, null, null) #:: defaultedIncomes).zip(incomes).
+            map({case (prev, curr) =>
+          val date = if(curr.date == null) prev.date else curr.date
+          curr.copy(date = date)
+     })
 
-     defaultedIncomes.foreach(upsert)
+
+     insertAll(defaultedIncomes)
 
      log.info(s"Loaded $count incomes from $source")
    }
 
    def ensureTablesCreated() = ensureTableCreated(TableQuery[Incomes])
 
-   private def upsert(income: Income) {
-     db.withDynSession {
-       val incQuery = TableQuery[Incomes]
-       incQuery.map(_.id).filter(_ === income.id).firstOption() match {
-         case Some(existingId) => {
-           log.debug(s"Update income: $existingId")
-           incQuery.where(_.id === existingId).update(income)
-         }
-         case None => {
-           incQuery.insert(income)
-         }
-       }
+   private def clear(fileCode: String) {
+    db.withSession {implicit session =>
+      val incQuery = TableQuery[Incomes]
+      incQuery.where(_.fileCode === fileCode).delete
+    }
+   }
+
+
+
+   private def insertAll(incomes: Iterable[Income]) {
+     val incQuery = TableQuery[Incomes]
+     db.withSession {implicit session =>
+       incQuery.insertAll(incomes.toSeq: _*)
      }
-   }//end upsert
+   }
 
    val log = LoggerFactory.getLogger(classOf[IncomesLoader])
  }
