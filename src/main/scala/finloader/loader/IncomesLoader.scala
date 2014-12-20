@@ -62,19 +62,16 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
 
    private def clear(fileCode: String) {
     db.withSession {implicit session =>
-      val incQuery = TableQuery[Incomes]
       incQuery.where(_.fileCode === fileCode).delete
     }
    }
 
-
-
    private def insertAll(incomes: Iterable[Income]) {
-     val incQuery = TableQuery[Incomes]
      db.withSession {implicit session =>
        incQuery.insertAll(incomes.toSeq: _*)
      }
    }
 
-   val log = LoggerFactory.getLogger(classOf[IncomesLoader])
+   private val incQuery = TableQuery[Incomes]
+   private val log = LoggerFactory.getLogger(classOf[IncomesLoader])
  }

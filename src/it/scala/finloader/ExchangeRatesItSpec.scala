@@ -29,8 +29,8 @@ class ExchangeRatesItSpec extends Specification {
   }
 
   private val sampleRates = Set(
-    ExchangeRate(id="pref_1", date = new LocalDate(2014, 01, 20), currency = "USD", rate = BigDecimal("8.50"), comment = "growing"),
-    ExchangeRate(id="pref_2", date = new LocalDate(2014, 01, 20), currency = "EUR", rate = BigDecimal("11.30"))
+    ExchangeRate(id="pref_1", fileCode = "pref_", date = new LocalDate(2014, 01, 20), currency = "USD", rate = BigDecimal("8.50"), comment = "growing"),
+    ExchangeRate(id="pref_2", fileCode = "pref_", date = new LocalDate(2014, 01, 20), currency = "EUR", rate = BigDecimal("11.30"))
   )
 
   private def loader(sep: Char) = new ExchangeRatesLoader(db)(new DefaultCSVFormat {override val separator = sep})

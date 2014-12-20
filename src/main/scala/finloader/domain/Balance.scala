@@ -13,10 +13,12 @@ import scala.slick.lifted.Tag
  *         Time: 21:47
  */
 
-case class Balance(id: String, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
+case class Balance(id: String, fileCode: String, snapshotId: String, date: LocalDate, place: String, amount: Long, currency: String, comment: String = "")
 
 class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
   def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
+
+  def fileCode = column[String]("fileCode", O.DBType("VARCHAR(128)"))
 
   def snapshotId = column[String]("snapshot_id", O.DBType("VARCHAR(64)"))
 
@@ -30,7 +32,7 @@ class Balances(tag: Tag) extends Table[Balance](tag, "balance") {
 
   def comment = column[String]("comment", O.DBType("TEXT"))
 
-  def * = (id, snapshotId, date, place, amount, currency, comment) <> (Balance.tupled, Balance.unapply _)
+  def * = (id, fileCode, snapshotId, date, place, amount, currency, comment) <> (Balance.tupled, Balance.unapply _)
 
 
   def snapshotIndex = index("balance_snapshot_id_index", snapshotId)

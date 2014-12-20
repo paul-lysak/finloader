@@ -11,10 +11,12 @@ import scala.slick.driver.JdbcDriver.Implicit._
  *         Date: 07.02.14
  *         Time: 22:17
  */
-case class ExchangeRate(id: String, date: LocalDate, currency: String, rate: BigDecimal, comment: String = "")
+case class ExchangeRate(id: String, fileCode: String, date: LocalDate, currency: String, rate: BigDecimal, comment: String = "")
 
 class ExchangeRates (tag: Tag) extends Table[ExchangeRate](tag, "rate") {
   def id = column[String]("id", O.PrimaryKey, O.DBType("VARCHAR(64)"))
+
+  def fileCode = column[String]("fileCode", O.DBType("VARCHAR(128)"))
 
   def date = column[LocalDate]("date")
 
@@ -25,7 +27,7 @@ class ExchangeRates (tag: Tag) extends Table[ExchangeRate](tag, "rate") {
   def comment = column[String]("comment", O.DBType("TEXT"))
 
 
-  def * = (id, date, currency, rate, comment) <> (ExchangeRate.tupled, ExchangeRate.unapply _)
+  def * = (id, fileCode, date, currency, rate, comment) <> (ExchangeRate.tupled, ExchangeRate.unapply _)
 
 
   def dateIndex = index("exrate_date_index", date)

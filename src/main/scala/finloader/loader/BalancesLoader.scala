@@ -7,7 +7,6 @@ import finloader.domain.{Balance, Balances}
 import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.driver.JdbcDriver.simple._
 import scala.slick.lifted.TableQuery
-import Database.dynamicSession
 import java.io.File
 import finloader.{DbUtils, FinloaderUtils}
 import finloader.FinloaderUtils._
@@ -23,6 +22,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
   def load(source: URL, idPrefix: String) {
     log.info(s"Loading balances from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
+    clear(idPrefix)
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
     val balances = reader.toStream() match {
@@ -33,6 +33,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
           val (amt, curr) = FinloaderUtils.parseAmount(r(p("amount")))
           count += 1
           Balance(id = idPrefix+count,
+            idPrefix,
             snapshotId = idPrefix+r(p("snapshotId")),
             date = parseDate(r(p("date"))),
             place = r(p("place")),
@@ -45,7 +46,7 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         Stream()
     }
 
-    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
+    lazy val defaultedBalances: Stream[Balance] = (Balance(null, null, null, null, null, 0, null) #:: defaultedBalances).zip(balances).
       map({case (prev, current) =>
         val snapshotId = if(current.snapshotId == idPrefix) prev.snapshotId else current.snapshotId
         val date = if(current.date == null) prev.date else current.date
@@ -54,33 +55,25 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
     defaultedBalances.foreach(println)
 
-    val groupedBalances = groupBalances(defaultedBalances)
-
-    groupedBalances.foreach((upsertSnapshot _).tupled)
+    insertAll(defaultedBalances)
 
     log.info(s"Loaded $count balances from $source")
   }
 
   def ensureTablesCreated() = ensureTableCreated(TableQuery[Balances])
 
-  def upsertSnapshot(snapshotId: String, snapshotItems: Seq[Balance]) = {
-    db.withDynSession {
-      val balQuery = TableQuery[Balances]
-      val delCount = balQuery.where(_.snapshotId === snapshotId).delete
-      log.debug(s"Deleted $delCount balances from snapshot $snapshotId")
-      balQuery.insertAll(snapshotItems: _*)
+  private def insertAll(balanceItems: Seq[Balance]) = {
+    db.withSession {implicit session =>
+      balQuery.insertAll(balanceItems: _*)
     }
   }
 
-  private def groupBalances(balances: Stream[Balance]): Stream[(String, Seq[Balance])] = {
-    if(balances.isEmpty)
-      Stream()
-    else {
-      val snapshotId = balances.head.snapshotId
-      val (thisSnapshot, remainder) = balances.span(_.snapshotId == snapshotId)
-      (snapshotId, thisSnapshot.toSeq) #:: groupBalances(remainder)
+  private def clear(fileCode: String) {
+    db.withSession {implicit session =>
+      balQuery.where(_.fileCode === fileCode).delete
     }
   }
 
-  val log = LoggerFactory.getLogger(classOf[BalancesLoader])
+  private val balQuery = TableQuery[Balances]
+  private val log = LoggerFactory.getLogger(classOf[BalancesLoader])
 }

@@ -23,6 +23,7 @@ class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends D
   def load(source: URL, idPrefix: String) = {
     log.info(s"Loading exchange rates from $source")
     log.debug(s"Using CSV separator ${csvFormat.separator}")
+    clear(idPrefix)
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0
     val ratesStream: Stream[ExchangeRate] =  (reader.toStream() match {
@@ -33,6 +34,7 @@ class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends D
           val r = row.toIndexedSeq
           count += 1
           ExchangeRate(id = idPrefix+r(p("id")),
+            idPrefix,
             date = parseDate(r(p("date"))),
             currency = r(p("currency")),
             rate = BigDecimal(r(p("rate"))),
@@ -43,34 +45,34 @@ class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends D
         Stream()
     })
 
-    lazy val defaultedRates: Stream[ExchangeRate] = (ExchangeRate(null, null, null, 0, null) #:: defaultedRates).zip(ratesStream).
+    lazy val defaultedRates: Stream[ExchangeRate] = (ExchangeRate(null, null, null, null, 0, null) #:: defaultedRates).zip(ratesStream).
           map({case (prev, curr) =>
         val date = if(curr.date == null) prev.date else curr.date
         curr.copy(date = date)
     })
 
-    defaultedRates.foreach(upsert)
+    insertAll(defaultedRates)
 
     log.info(s"Loaded $count exchange rates from $source")
   }
 
   def ensureTablesCreated() = ensureTableCreated(TableQuery[ExchangeRates])
 
-  private def upsert(rate: ExchangeRate) {
-    db.withSession {
-      implicit session =>
-      val expQuery = TableQuery[ExchangeRates]
-      expQuery.map(_.id).filter(_ === rate.id).firstOption() match {
-        case Some(existingId) => {
-          log.debug(s"Update $existingId")
-          expQuery.where(_.id === existingId).update(rate)
-        }
-        case None => {
-          expQuery.insert(rate)
-        }
-      }
+  private def insertAll(exRates: Seq[ExchangeRate]) = {
+    db.withSession {implicit session =>
+      erQuery.insertAll(exRates: _*)
     }
-  }//end upsert
+  }
 
-  val log = LoggerFactory.getLogger(classOf[ExchangeRatesLoader])
+
+  private def clear(fileCode: String) {
+    db.withSession {implicit session =>
+      erQuery.where(_.fileCode === fileCode).delete
+    }
+  }
+
+
+  private val erQuery = TableQuery[ExchangeRates]
+
+  private val log = LoggerFactory.getLogger(classOf[ExchangeRatesLoader])
 }

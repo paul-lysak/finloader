@@ -1,13 +1,6 @@
-- auto-generate IDs, rewrite by files
-    - introduce file field to all entities
-        * expense
-        * income
-        - balance
-        - rates
-    - persist file name
-    - drop entries related to file before import
 - skip unmodified files
     - table with file dates
     - save date of file after loading completes
     - check file date before loading
-
+- try to reuse querries where possible
+    - common cleanup code

@@ -66,8 +66,6 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
   private def clear(fileCode: String) {
     db.withSession {implicit session =>
-      val expenseTags = TableQuery[ExpenseTags]
-      val expQuery = TableQuery[Expenses]
       expenseTags.where(t => expQuery.where(_.id === t.expenseId).exists).delete
       expQuery.where(_.fileCode === fileCode).delete
     }
@@ -76,18 +74,18 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
   private val insert = {(expense: Expense, tagsString: String) =>
     db.withSession {implicit session =>
-      val expQuery = TableQuery[Expenses]
       expQuery.insert(expense)
       updateTags(expense.id, expense.category, tagsString)
     }
   }
 
   private def updateTags(expenseId: String, category: String, tagsString: String)(implicit session: Session) {
-        val expenseTags = TableQuery[ExpenseTags]
         expenseTags.where(_.expenseId === expenseId).delete
         val tags = tagsString.split(" ").filter(_.nonEmpty) :+ category
         expenseTags.map(et => (et.expenseId, et.tag)) ++= tags.map(t => (expenseId, t))
   }
 
-  val log = LoggerFactory.getLogger(classOf[ExpensesLoader])
+  private val expenseTags = TableQuery[ExpenseTags]
+  private val expQuery = TableQuery[Expenses]
+  private val log = LoggerFactory.getLogger(classOf[ExpensesLoader])
 }
