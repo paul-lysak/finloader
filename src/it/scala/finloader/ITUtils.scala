@@ -31,6 +31,7 @@ object ITUtils {
       TableQuery[ExchangeRates].ddl.create
 //      println("ddl="+TableQuery[ExpenseTags].ddl.createStatements.mkString("\n"))
       TableQuery[ExpenseTags].ddl.create
+      TableQuery[FileInfos].ddl.create
     }
   }
 }

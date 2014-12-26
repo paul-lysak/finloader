@@ -9,7 +9,6 @@ import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.ExpensesLoader
 import finloader.entities.{ExpenseTags, Expenses, Expense}
-//import Database.dynamicSession
 
 /**
  * @author Paul Lysak

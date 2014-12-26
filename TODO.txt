@@ -4,3 +4,4 @@
     - check file date before loading
 - try to reuse querries where possible
     - common cleanup code
+- avoid table creation when running individual tests
