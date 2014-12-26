@@ -51,7 +51,7 @@ class FileInfoServiceItSpec extends Specification {
 
   private val SAMPLE_DATE2 = LocalDateTime.parse("2014-12-25")
 
-  private val fiService = new FileInfoService()
+  private val fiService = new FileInfoService(ITUtils.db)
 
   private val fiQuery = TableQuery[FileInfos]
 
