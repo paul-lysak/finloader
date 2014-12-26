@@ -1,5 +1,5 @@
 - skip unmodified files
-    - table with file dates
+    + table with file dates
     - save date of file after loading completes
     - check file date before loading
 - try to reuse querries where possible

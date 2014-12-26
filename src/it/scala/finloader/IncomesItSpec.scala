@@ -7,7 +7,7 @@ import scala.slick.driver.JdbcDriver.simple._
 import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.{IncomesLoader, ExpensesLoader}
-import finloader.domain.{Income, Incomes, Expenses, Expense}
+import finloader.entities.{Income, Incomes, Expenses, Expense}
 import Database.dynamicSession
 import scala.slick.lifted.TableQuery
 

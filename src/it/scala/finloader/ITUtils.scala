@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import java.io.File
 import scala.slick.lifted.TableQuery
 import scala.slick.jdbc.JdbcBackend.Database
-import finloader.domain._
+import finloader.entities._
 import scala.slick.driver.JdbcDriver.simple._
 
 /**

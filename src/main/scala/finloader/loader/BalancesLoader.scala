@@ -3,7 +3,7 @@ package finloader.loader
 import com.github.tototoshi.csv.{CSVReader, CSVFormat}
 import java.net.URL
 import org.slf4j.LoggerFactory
-import finloader.domain.{Balance, Balances}
+import finloader.entities.{Balance, Balances}
 import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.driver.JdbcDriver.simple._
 import scala.slick.lifted.TableQuery

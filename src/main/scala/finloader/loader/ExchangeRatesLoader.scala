@@ -1,7 +1,7 @@
 package finloader.loader
 
 import java.net.URL
-import finloader.domain.{ExchangeRate, ExchangeRates}
+import finloader.entities.{ExchangeRate, ExchangeRates}
 import scala.slick.lifted.TableQuery
 import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.driver.JdbcDriver.simple._

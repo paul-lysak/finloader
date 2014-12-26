@@ -7,7 +7,7 @@ import scala.slick.lifted.TableQuery
 import ITUtils.db
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.ExchangeRatesLoader
-import finloader.domain.{ExchangeRate, ExchangeRates}
+import finloader.entities.{ExchangeRate, ExchangeRates}
 import org.joda.time.LocalDate
 /**
  * @author Paul Lysak

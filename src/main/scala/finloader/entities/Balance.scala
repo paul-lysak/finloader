@@ -1,4 +1,4 @@
-package finloader.domain
+package finloader.entities
 
 import org.joda.time.LocalDate
 import com.github.tototoshi.slick.JdbcJodaSupport._

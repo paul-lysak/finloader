@@ -5,7 +5,7 @@ import scala.slick.driver.JdbcDriver.simple._
 import java.io.File
 import java.net.URL
 import com.github.tototoshi.csv.{CSVFormat, CSVReader}
-import finloader.domain.{Income, Incomes}
+import finloader.entities.{Income, Incomes}
 import scala.slick.lifted.TableQuery
 import org.slf4j.LoggerFactory
 import finloader.{DbUtils, FinloaderUtils}
