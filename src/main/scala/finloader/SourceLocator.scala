@@ -9,26 +9,17 @@ import scala.collection.JavaConversions._
  *         Date: 25.07.13
  *         Time: 23:31
  */
-class SourceLocator {
+class SourceLocator(prefix: String) {
 
-  val locateExpenses = locate(ExpensesFilter) _
-  val locateBalances = locate(BalancesFilter) _
-  val locateIncomes = locate(IncomesFilter) _
-  val locateRates = locate(RatesFilter) _
+  private val filter = new PrefixFilter(prefix)
 
-  def locate(filter: FilenameFilter)(baseUrl: URL): Seq[URL] =  {
+  def locate(baseUrl: URL): Seq[URL] =  {
     val file = new File(baseUrl.toURI)
     val files = file.listFiles(filter)
     files.map(_.toURI.toURL)
   }
 
-
-  private object ExpensesFilter extends Filter("exp_")
-  private object BalancesFilter extends Filter("chk_")
-  private object IncomesFilter extends Filter("inc_")
-  private object RatesFilter extends Filter("rate_")
-
-  private class Filter(prefix: String) extends FilenameFilter {
+ class PrefixFilter(prefix: String) extends FilenameFilter {
     private def sub(dir: File, name: String): File =
       new File(dir.getAbsolutePath + "/" + name)
 
@@ -36,4 +27,7 @@ class SourceLocator {
        name.endsWith(".csv") && name.startsWith(prefix) && sub(dir, name).isFile
     }
   }
+
 }
+
+
