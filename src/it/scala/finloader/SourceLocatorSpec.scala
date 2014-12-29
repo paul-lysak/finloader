@@ -14,8 +14,8 @@ class SourceLocatorSpec extends Specification {
 
   "SourceLocator" should {
     "find expenses" in {
-      val urls = sl.locate(getClass.getResource("/sample_ds"))
-      val names = urls.map(url => (new File(url.getFile)).getName).toSet
+      val files = sl.locate(getClass.getResource("/sample_ds"))
+      val names = files.map(_.getName).toSet
       names must be equalTo(Set("exp_201306.csv"))
     }
   }

@@ -13,10 +13,10 @@ class SourceLocator(prefix: String) {
 
   private val filter = new PrefixFilter(prefix)
 
-  def locate(baseUrl: URL): Seq[URL] =  {
+  def locate(baseUrl: URL): Seq[File] =  {
     val file = new File(baseUrl.toURI)
     val files = file.listFiles(filter)
-    files.map(_.toURI.toURL)
+    files.toSeq
   }
 
  class PrefixFilter(prefix: String) extends FilenameFilter {

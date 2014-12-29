@@ -22,20 +22,18 @@ class FinloaderContext(configFile: File) {
     override val separator = config.getString("csv.separator").head
   }
 
-  val expensesLocator = new SourceLocator("exp_")
-  val balancesLocator = new SourceLocator("chk_")
-  val incomesLocator = new SourceLocator("inc_")
-  val ratesLocator = new SourceLocator("rate_")
 
+  val dbService = new DbService()(db)
 
-  val expensesLoader = new ExpensesLoader(db)
-  val balancesLoader = new BalancesLoader(db)
-  val incomesLoader = new IncomesLoader(db)
-  val ratesLoader = new ExchangeRatesLoader(db)
+  val fileInfoService = new FileInfoService(db)
 
-//  val finloaderService = new FinloaderService(locator, expensesLoader, balancesLoader, incomesLoader, ratesLoader)
-  val finloaderService = new FinloaderService(expensesLocator, balancesLocator, incomesLocator, ratesLocator,
-    expensesLoader, balancesLoader, incomesLoader, ratesLoader)
+  private val loaderScopes = Seq(
+    LoaderScope(new SourceLocator("exp_"), new ExpensesLoader(db)),
+    LoaderScope(new SourceLocator("chk_"), new BalancesLoader(db)),
+    LoaderScope(new SourceLocator("inc_"), new IncomesLoader(db)),
+    LoaderScope(new SourceLocator("rate_"), new ExchangeRatesLoader(db))
+  )
+  val finloaderService = new FinloaderService(loaderScopes, fileInfoService)
 
   private val log = LoggerFactory.getLogger(classOf[FinloaderContext])
 }

@@ -1,5 +1,3 @@
-- skip unmodified files
-    - integrate service into remaining part of app
 - try to reuse querries where possible
     - common cleanup code
 - get rid of DynamicSession: DbUtils

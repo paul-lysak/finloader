@@ -2,6 +2,8 @@ package finloader
 
 import java.net.URL
 import java.io.File
+import java.util.Date
+import org.joda.time.LocalDateTime
 import org.slf4j.LoggerFactory
 import finloader.loader.{ExchangeRatesLoader, IncomesLoader, BalancesLoader, ExpensesLoader}
 
@@ -10,30 +12,26 @@ import finloader.loader.{ExchangeRatesLoader, IncomesLoader, BalancesLoader, Exp
  *         Date: 01.08.13
  *         Time: 23:20
  */
-class FinloaderService(locator1: SourceLocator,
-                      locator2: SourceLocator,
-                      locator3: SourceLocator,
-                      locator4: SourceLocator,
-                       expensesLoader: ExpensesLoader,
-                       balancesLoader: BalancesLoader,
-                       incomesLoader: IncomesLoader,
-                       ratesLoader: ExchangeRatesLoader) {
-  expensesLoader.ensureTablesCreated()
-  balancesLoader.ensureTablesCreated()
-  incomesLoader.ensureTablesCreated()
-  ratesLoader.ensureTablesCreated();
+class FinloaderService(scopes: Seq[LoaderScope], fileInfoService: FileInfoService) {
 
   def loadData(folderUrl: URL) {
     log.info(s"Loading data from $folderUrl...")
-    locator1.locate(folderUrl).foreach( fileUrl =>  expensesLoader.load(fileUrl, idPrefix(fileUrl)) )
-    locator2.locate(folderUrl).foreach( fileUrl =>  balancesLoader.load(fileUrl, idPrefix(fileUrl)) )
-    locator3.locate(folderUrl).foreach( fileUrl =>  incomesLoader.load(fileUrl, idPrefix(fileUrl)) )
-    locator4.locate(folderUrl).foreach( fileUrl =>  ratesLoader.load(fileUrl, idPrefix(fileUrl)) )
+    scopes.foreach({case LoaderScope(locator, loader) =>
+      val files = locator.locate(folderUrl)
+      files.map(file => (file, idPrefix(file))).
+      filter({case (file, code) => fileInfoService.needsUpdate(code, fileUpdDate(file))}).
+      foreach({case (file, code) =>
+        loader.load(file.toURI.toURL, code)
+        fileInfoService.setUpdatedDateTime(code, fileUpdDate(file))
+      })
+    })
+
     log.info(s"Finished loading data from $folderUrl")
   }
 
-  private def idPrefix(url: URL) = {
-      val file = new File(url.toURI)
+  private def fileUpdDate(file: File) = LocalDateTime.fromDateFields(new Date(file.lastModified()))
+
+  private def idPrefix(file: File) = {
       file.getName.toLowerCase.stripSuffix(".csv") + "_"
   }
 

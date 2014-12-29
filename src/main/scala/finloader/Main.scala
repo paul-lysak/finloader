@@ -13,6 +13,7 @@ object Main {
     val conf = new CliConf(args)
     val ctx = new FinloaderContext(new File(conf.config()))
     val dataFolder = new File(conf.data()).toURI.toURL
+    ctx.dbService.ensureTablesCreated()
     ctx.finloaderService.loadData(dataFolder)
   }
 }

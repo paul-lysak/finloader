@@ -53,8 +53,6 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
         current.copy(snapshotId = snapshotId, date = date)
     })
 
-    defaultedBalances.foreach(println)
-
     insertAll(defaultedBalances)
 
     log.info(s"Loaded $count balances from $source")
