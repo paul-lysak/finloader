@@ -16,7 +16,7 @@ import finloader.FinloaderUtils._
  *         Date: 15.08.13
  *         Time: 21:43
  */
-class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
   private implicit val dbImpl = db
 
   def load(source: URL, idPrefix: String) {
@@ -57,8 +57,6 @@ class BalancesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
     log.info(s"Loaded $count balances from $source")
   }
-
-  def ensureTablesCreated() = ensureTableCreated(TableQuery[Balances])
 
   private def insertAll(balanceItems: Seq[Balance]) = {
     db.withSession {implicit session =>

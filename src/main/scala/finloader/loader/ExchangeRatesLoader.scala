@@ -17,7 +17,7 @@ import finloader.FinloaderUtils._
  *         Date: 07.02.14
  *         Time: 22:34
  */
-class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
   private implicit val dbImpl = db
 
   def load(source: URL, idPrefix: String) = {
@@ -55,8 +55,6 @@ class ExchangeRatesLoader(db: Database)(implicit csvFormat: CSVFormat) extends D
 
     log.info(s"Loaded $count exchange rates from $source")
   }
-
-  def ensureTablesCreated() = ensureTableCreated(TableQuery[ExchangeRates])
 
   private def insertAll(exRates: Seq[ExchangeRate]) = {
     db.withSession {implicit session =>

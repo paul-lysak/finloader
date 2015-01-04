@@ -17,7 +17,7 @@ import FinloaderUtils._
   *         Date: 05.07.13
   *         Time: 21:55
   */
-class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
    private implicit val dbImpl = db
 
    def load(source: URL, idPrefix: String = "") {
@@ -57,8 +57,6 @@ class IncomesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoa
 
      log.info(s"Loaded $count incomes from $source")
    }
-
-   def ensureTablesCreated() = ensureTableCreated(TableQuery[Incomes])
 
    private def clear(fileCode: String) {
     db.withSession {implicit session =>

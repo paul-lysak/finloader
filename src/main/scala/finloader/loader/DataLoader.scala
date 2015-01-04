@@ -9,7 +9,4 @@ import java.net.URL
  */
 trait DataLoader {
   def load(source: URL, idPrefix: String = "")
-
-  //TODO do we need it? I think no, but need some time to decide finally.
-  def ensureTablesCreated()
 }

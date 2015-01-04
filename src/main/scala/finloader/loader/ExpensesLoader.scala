@@ -17,7 +17,7 @@ import finloader.FinloaderUtils._
  *         Date: 05.07.13
  *         Time: 21:55
  */
-class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader with DbUtils {
+class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLoader {
   private implicit val dbImpl = db
 
   def load(source: URL, idPrefix: String = "") {
@@ -57,11 +57,6 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
    defaultedExpenses.foreach(insert.tupled)
 
     log.info(s"Loaded $count expenses from $source")
-  }
-
-  def ensureTablesCreated() = {
-    ensureTableCreated(TableQuery[Expenses])
-    ensureTableCreated(TableQuery[ExpenseTags])
   }
 
   private def clear(fileCode: String) {
