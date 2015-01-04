@@ -33,5 +33,6 @@ object ITUtils {
       TableQuery[ExpenseTags].ddl.create
       TableQuery[FileInfos].ddl.create
     }
+    println("DB schema created")
   }
 }

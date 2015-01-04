@@ -19,7 +19,7 @@ class FinloaderContext(configFile: File) {
   val db = Database.forURL(config.getString("database.url"), driver = config.getString("database.driver"))
 
   implicit private val csvFormat = new DefaultCSVFormat {
-    override val separator = config.getString("csv.separator").head
+    override val delimiter = config.getString("csv.separator").head
   }
 
 

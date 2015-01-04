@@ -8,7 +8,6 @@ import org.joda.time.LocalDate
 import com.github.tototoshi.csv.DefaultCSVFormat
 import finloader.loader.{IncomesLoader, ExpensesLoader}
 import finloader.entities.{Income, Incomes, Expenses, Expense}
-import Database.dynamicSession
 import scala.slick.lifted.TableQuery
 
 /**
@@ -22,8 +21,8 @@ class IncomesItSpec extends Specification {
     "load incomes" in {
       val url1 = getClass.getResource("/inc_2013.csv")
       loader(',').load(url1, "pref_")
-      db.withDynSession {
-        val actualIncomes = TableQuery[Incomes].list().toSet
+      db.withSession {implicit session =>
+        val actualIncomes = TableQuery[Incomes].list.toSet
         actualIncomes must be equalTo(sampleIncomes)
       }
    }
@@ -31,10 +30,10 @@ class IncomesItSpec extends Specification {
 
 
   private val sampleIncomes = Set(
-    Income(id = "pref_1", fileCode = "pref_", date = new LocalDate(2013, 06, 10), amount = 1000000, currency = "UAH", source = "job", comment = "for may 2013"),
-    Income(id = "pref_2", fileCode = "pref_", date = new LocalDate(2013, 06, 12), amount = 20000, currency = "UAH", source = "sell", comment = "old furniture"),
-    Income(id = "pref_3", fileCode = "pref_", date = new LocalDate(2013, 06, 12), amount = 50000, currency = "UAH", source = "sell", comment = "old computer")
+    Income(id = "pref_1", fileCode = "pref_", date = new LocalDate(2013, 6, 10), amount = 1000000, currency = "UAH", source = "job", comment = "for may 2013"),
+    Income(id = "pref_2", fileCode = "pref_", date = new LocalDate(2013, 6, 12), amount = 20000, currency = "UAH", source = "sell", comment = "old furniture"),
+    Income(id = "pref_3", fileCode = "pref_", date = new LocalDate(2013, 6, 12), amount = 50000, currency = "UAH", source = "sell", comment = "old computer")
   )
 
-  private def loader(sep: Char) = new IncomesLoader(db)(new DefaultCSVFormat {override val separator = sep})
+  private def loader(sep: Char) = new IncomesLoader(db)(new DefaultCSVFormat {override val delimiter = sep})
 }

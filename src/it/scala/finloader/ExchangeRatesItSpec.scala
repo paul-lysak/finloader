@@ -20,20 +20,19 @@ class ExchangeRatesItSpec extends Specification {
     "load rates" in {
       val url1 = getClass.getResource("/rate_2014.csv")
       loader(',').load(url1, "pref_")
-      db.withSession {
-        implicit session =>
-        val actualBalances = TableQuery[ExchangeRates].list().toSet
+      db.withSession {implicit session =>
+        val actualBalances = TableQuery[ExchangeRates].list.toSet
         actualBalances must be equalTo(sampleRates)
       }
    }
   }
 
   private val sampleRates = Set(
-    ExchangeRate(id="pref_1", fileCode = "pref_", date = new LocalDate(2014, 01, 20), currency = "USD", rate = BigDecimal("8.50"), comment = "growing"),
-    ExchangeRate(id="pref_2", fileCode = "pref_", date = new LocalDate(2014, 01, 20), currency = "EUR", rate = BigDecimal("11.30"))
+    ExchangeRate(id="pref_1", fileCode = "pref_", date = new LocalDate(2014, 1, 20), currency = "USD", rate = BigDecimal("8.50"), comment = "growing"),
+    ExchangeRate(id="pref_2", fileCode = "pref_", date = new LocalDate(2014, 1, 20), currency = "EUR", rate = BigDecimal("11.30"))
   )
 
-  private def loader(sep: Char) = new ExchangeRatesLoader(db)(new DefaultCSVFormat {override val separator = sep})
+  private def loader(sep: Char) = new ExchangeRatesLoader(db)(new DefaultCSVFormat {override val delimiter = sep})
 
 }
 

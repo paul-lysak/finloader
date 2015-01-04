@@ -22,7 +22,7 @@ class ExpensesLoader(db: Database)(implicit csvFormat: CSVFormat) extends DataLo
 
   def load(source: URL, idPrefix: String = "") {
     log.info(s"Loading expenses from $source")
-    log.debug(s"Using CSV separator ${csvFormat.separator}")
+    log.debug(s"Using CSV separator ${csvFormat.delimiter}")
     clear(idPrefix)
     val reader = CSVReader.open(new File(source.toURI))
     var count = 0

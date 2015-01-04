@@ -39,7 +39,7 @@ class Expenses(tag: Tag) extends Table[Expense](tag, "expense") {
 case class ExpenseTag(id: Option[Long], expenseId: String, tag: String)
 
 class ExpenseTags(t: Tag) extends Table[ExpenseTag](t, "expense_tags") {
-  def id = column[Long]("id", O.PrimaryKey, O.DBType("SERIAL"))//O.AutoInc doesnt' work directly
+  def id = column[Long]("id", O.PrimaryKey, O.DBType("SERIAL"))//O.AutoInc generates incompatible DDL code so it can't be used here
 
   def expenseId = column[String]("expense_id", O.DBType("VARCHAR(64)"))
 

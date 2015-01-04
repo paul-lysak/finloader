@@ -40,7 +40,7 @@ class FileInfoServiceItSpec extends Specification {
 
     "avoid redundant records" in {
       db.withSession { implicit session =>
-        fiQuery.list().size must beEqualTo(1)
+        fiQuery.list.size must beEqualTo(1)
       }
     }
   }
@@ -58,7 +58,7 @@ class FileInfoServiceItSpec extends Specification {
   private def cleanFileInfo {
     db.withSession { implicit session =>
         fiQuery.delete
-        fiQuery.list().toSet must beEmpty
+        fiQuery.list.toSet must beEmpty
     }
   }
 

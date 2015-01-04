@@ -4,7 +4,7 @@ import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.driver.JdbcDriver.simple._
 import scala.slick.jdbc.meta.MTable
 import scala.slick.lifted.{TableQuery}
-import scala.slick.ast.TableNode
+import scala.slick.ast.{TableExpansion, TableNode}
 
 /**
  * @author Paul Lysak
@@ -14,7 +14,8 @@ import scala.slick.ast.TableNode
 trait DbUtils {
   def ensureTableCreated[E <: Table[_]](tableQueryObject: TableQuery[E])(implicit db: Database) {
     db.withSession {implicit session =>
-        if(MTable.getTables(tableQueryObject.unpackable.value.tableName).firstOption().isEmpty)
+      val tableName = tableQueryObject.toNode.asInstanceOf[TableExpansion].table.asInstanceOf[TableNode].tableName
+      if(MTable.getTables(tableName).firstOption.isEmpty)
           tableQueryObject.ddl.create
     }
   }
