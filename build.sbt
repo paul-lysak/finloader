@@ -46,7 +46,7 @@ assemblySettings
 
 //net.virtualvoid.sbt.graph.Plugin.graphSettings
 
-EclipseKeys.configurations := Set(Compile, Test, IntegrationTest)
+//EclipseKeys.configurations := Set(Compile, Test, IntegrationTest)
 
 //hack for sbteclipse
 //unmanagedSourceDirectories in Compile <++= baseDirectory { base =>
