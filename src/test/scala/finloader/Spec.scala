@@ -15,7 +15,7 @@ class Spec extends Specification {
 
 
   "it" should {
-    println("hello world")
+    println("hello spec")
 
 //    Database.forURL("jdbc:postgresql://localhost/finloader?user=dbadmin&password=dbadmin", driver = "org.postgresql.Driver") withSession {
 //      println("hello session")

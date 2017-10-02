@@ -16,15 +16,22 @@ class FinloaderService(scopes: Seq[LoaderScope], fileInfoService: FileInfoServic
 
   def loadData(folderUrl: URL) {
     log.info(s"Loading data from $folderUrl...")
-    scopes.foreach({case LoaderScope(locator, loader) =>
-      val files = locator.locate(folderUrl)
-      files.map(file => (file, idPrefix(file))).
-      filter({case (file, code) => fileInfoService.needsUpdate(code, fileUpdDate(file))}).
-      foreach({case (file, code) =>
-        loader.load(file.toURI.toURL, code)
-        fileInfoService.setUpdatedDateTime(code, fileUpdDate(file))
+    try {
+      scopes.foreach({case LoaderScope(locator, loader) =>
+        val files = locator.locate(folderUrl)
+        files.map(file => (file, idPrefix(file))).
+        filter({case (file, code) => fileInfoService.needsUpdate(code, fileUpdDate(file))}).
+        foreach({case (file, code) =>
+          loader.load(file.toURI.toURL, code)
+          fileInfoService.setUpdatedDateTime(code, fileUpdDate(file))
+        })
       })
-    })
+    } catch {
+      //unfortunately, this kind of exception doesn't display its true reason unless explicitly asked by getNextException
+      case e: java.sql.BatchUpdateException =>
+        log.error("Batch update failed", e)
+        throw e.getNextException;
+    }
 
     log.info(s"Finished loading data from $folderUrl")
   }
